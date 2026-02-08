@@ -39,7 +39,7 @@ const MONTHS = [
 ];
 
 export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
-  const [selectedMonth, setSelectedMonth] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState("1");
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
 
@@ -66,10 +66,10 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
   const handleUpdateSubmit = (updatedExpense) => {
     onUpdate(updatedExpense);
   };
-const getMonthLabel = (monthValue) => {
+  const getMonthLabel = (monthValue) => {
     const month = MONTHS.find((m) => m.value === monthValue);
     return month ? month.label : "";
-  }
+  };
   return (
     <>
       <Card
@@ -77,7 +77,7 @@ const getMonthLabel = (monthValue) => {
           background: "rgba(30,30,35,0.6)",
           backdropFilter: "blur(10px)",
           border: "1px solid rgba(255,255,255,0.08)",
-          width: '100%',
+          width: "100%",
         }}
       >
         <CardContent>
@@ -116,19 +116,34 @@ const getMonthLabel = (monthValue) => {
 
           <TableContainer
             component={Paper}
-            sx={{ boxShadow: "none", background: "transparent", width: '100%', maxWidth: '100%' }}
+            sx={{
+              boxShadow: "none",
+              background: "transparent",
+              width: "100%",
+              maxWidth: "100%",
+              maxHeight: 500,
+              overflowY: "auto",
+            }}
           >
-            <Table sx={{ width: '100%', tableLayout: 'fixed' }} aria-label="expense table">
-              <TableHead>
+            <Table
+              sx={{ width: "100%", tableLayout: "fixed" }}
+              aria-label="expense table"
+            >
+              <TableHead
+                sx={{
+                  position: "sticky",
+                  top: 0,
+                  background: "rgba(30,30,35,1)",
+                  zIndex: 2,
+                }}
+              >
                 <TableRow>
                   <TableCell>Date</TableCell>
                   <TableCell>Month</TableCell>
                   <TableCell>Expense</TableCell>
-                  <TableCell sx={{ width: '25%' }}>Description</TableCell>
+                  <TableCell sx={{ width: "25%" }}>Description</TableCell>
                   <TableCell>Amount</TableCell>
-                  <TableCell sx={{
-                    width:120
-                  }}>Actions</TableCell>
+                  <TableCell sx={{ width: 120 }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -147,38 +162,39 @@ const getMonthLabel = (monthValue) => {
                         {new Date(expense.date).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        {new Date(expense.date).toLocaleDateString('en-US', { month: 'long' })}
+                        {new Date(expense.date).toLocaleDateString("en-US", {
+                          month: "long",
+                        })}
                       </TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>
                         {expense.name}
                       </TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>
-                        {expense.description}
+                        {expense.description || "Not Provided"}
                       </TableCell>
-                      <TableCell align="left" sx={{ fontWeight: "bold" }}>
-                        Rs. {expense.amount.toFixed(2)}
-                      </TableCell>
-                      <TableCell align="left" >
+                      <TableCell
+                        align="left"
+                        sx={{ fontWeight: "bold" }}
+                      >{`Rs. ${expense.amount.toFixed(2)}`}</TableCell>
+                      <TableCell align="left">
                         <Tooltip title="Edit Expense">
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleEditClick(expense)}
-                          size="small"
-                          sx={{
-                            mr:0.5
-                          }}
-                        >
-                          <EditIcon />
-                        </IconButton>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleEditClick(expense)}
+                            size="small"
+                            sx={{ mr: 0.5 }}
+                          >
+                            <EditIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete Expense">
-                        <IconButton
-                          color="error"
-                          onClick={() => onDelete(expense._id || expense.id)}
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => onDelete(expense._id || expense.id)}
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </Tooltip>
                       </TableCell>
                     </TableRow>
@@ -194,52 +210,48 @@ const getMonthLabel = (monthValue) => {
                     </TableCell>
                   </TableRow>
                 )}
-               {selectedMonth !== "all" && (<TableRow sx={{ background: "rgba(124, 58, 237, 0.05)" }}>
-                  <TableCell
-                    colSpan={4}
-                    align="left"
-                        sx={{
-                      fontWeight: "bold",
-                      color: "primary.main",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {`${getMonthLabel(selectedMonth)} Expense`}
-                  </TableCell>
-                  <TableCell
-                    align="left"
+                {selectedMonth !== "all" && (
+                  <TableRow
                     sx={{
-                      fontWeight: "bold",
-                      color: "primary.main",
-                      fontSize: "1.1rem",
+                      background: "rgba(30,30,35,1)",
+                      zIndex: 2,
+                      position: "sticky",
+                      bottom: 58,
+                      zIndex: 1,
                     }}
                   >
-                    Rs. {totalAmount.toFixed(2)}
-                  </TableCell>
-                  <TableCell />
-                </TableRow>)}
-                <TableRow sx={{ background: "rgba(124, 58, 237, 0.05)" }}>
+                    <TableCell
+                      colSpan={4}
+                      align="left"
+                      sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
+                    >{`${getMonthLabel(selectedMonth)} Expense`}</TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
+                    >{`Rs. ${totalAmount.toFixed(2)}`}</TableCell>
+                    <TableCell />
+                  </TableRow>
+                )}
+                <TableRow
+                  sx={{
+                    background: "rgba(30,30,35,1)",
+                    zIndex: 2,
+                    position: "sticky",
+                    bottom: 0,
+                    zIndex: 1,
+                  }}
+                >
                   <TableCell
                     colSpan={4}
                     align="left"
-                        sx={{
-                      fontWeight: "bold",
-                      color: "primary.main",
-                      fontSize: "1.1rem",
-                    }}
+                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
                   >
                     Yearly Total
                   </TableCell>
                   <TableCell
                     align="left"
-                    sx={{
-                      fontWeight: "bold",
-                      color: "primary.main",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    Rs. {yearlyTotal.toFixed(2)}
-                  </TableCell>
+                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
+                  >{`Rs. ${yearlyTotal.toFixed(2)}`}</TableCell>
                   <TableCell />
                 </TableRow>
               </TableBody>

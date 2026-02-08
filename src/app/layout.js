@@ -8,14 +8,14 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Premium Expense Manager",
+  title: "My Expense Manager",
   description: "Track your expenses in style",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <ThemeRegistry>{children}</ThemeRegistry>
       </body>
     </html>
