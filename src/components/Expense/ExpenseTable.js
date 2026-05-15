@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -17,6 +18,7 @@ import {
   MenuItem,
   IconButton,
   Tooltip,
+  Pagination,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -39,32 +41,70 @@ const MONTHS = [
 ];
 
 export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
-  const [selectedMonth, setSelectedMonth] = useState("1");
+  const router = useRouter();
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().getMonth().toString(),
+  );
+  const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalCount: 0,
+    limit: 10,
+  });
+  const [refreshKey, setRefreshKey] = useState(0);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
 
-  const filteredExpenses = useMemo(() => {
-    if (selectedMonth === "all") return expenses;
-    return expenses.filter((expense) => {
-      const expenseDate = new Date(expense.date);
-      return expenseDate.getMonth().toString() === selectedMonth;
-    });
-  }, [expenses, selectedMonth]);
-
-  const totalAmount = useMemo(() => {
-    return filteredExpenses.reduce((sum, item) => sum + item.amount, 0);
-  }, [filteredExpenses]);
-  const yearlyTotal = useMemo(() => {
-    return expenses.reduce((sum, item) => sum + item.amount, 0);
-  }, [expenses]);
-
+  const handleUnauthorized = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
+    }
+    router.push("/login");
+  };
+  // Fetch filtered expenses from backend when month, page, or rowsPerPage changes
+  useEffect(() => {
+    const fetchFilteredExpenses = async () => {
+      try {
+        const monthQuery =
+          selectedMonth === "all" ? "" : `month=${selectedMonth}&`;
+        const res = await fetch(
+          `/api/expenses?${monthQuery}page=${currentPage}&limit=${rowsPerPage}`,
+        );
+        if (res.status === 401) {
+          handleUnauthorized();
+          return;
+        }
+        if (res.ok) {
+          const result = await res.json();
+          setFilteredExpenses(result.data);
+          setPagination(result.pagination);
+        }
+      } catch (error) {
+        console.error("Error fetching filtered expenses:", error);
+      }
+    };
+    fetchFilteredExpenses();
+  }, [selectedMonth, currentPage, rowsPerPage, refreshKey, expenses]);
   const handleEditClick = (expense) => {
     setSelectedExpense(expense);
     setEditModalOpen(true);
   };
 
-  const handleUpdateSubmit = (updatedExpense) => {
-    onUpdate(updatedExpense);
+  const handleDelete = async (id) => {
+    await onDelete(id);
+    setCurrentPage(1);
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  const handleUpdateSubmit = async (updatedExpense) => {
+    await onUpdate(updatedExpense);
+    // Refresh current page and data after update
+    setCurrentPage(1);
+    setRefreshKey((prev) => prev + 1);
   };
   const getMonthLabel = (monthValue) => {
     const month = MONTHS.find((m) => m.value === monthValue);
@@ -102,7 +142,10 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
               select
               size="small"
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
+              onChange={(e) => {
+                setSelectedMonth(e.target.value);
+                setCurrentPage(1);
+              }}
               sx={{ width: 200 }}
               label="Filter by Month"
             >
@@ -190,7 +233,9 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
                         <Tooltip title="Delete Expense">
                           <IconButton
                             color="error"
-                            onClick={() => onDelete(expense._id || expense.id)}
+                            onClick={() =>
+                              handleDelete(expense._id || expense.id)
+                            }
                             size="small"
                           >
                             <DeleteIcon />
@@ -210,53 +255,44 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
                     </TableCell>
                   </TableRow>
                 )}
-                {selectedMonth !== "all" && (
-                  <TableRow
-                    sx={{
-                      background: "rgba(30,30,35,1)",
-                      zIndex: 2,
-                      position: "sticky",
-                      bottom: 58,
-                      zIndex: 1,
-                    }}
-                  >
-                    <TableCell
-                      colSpan={4}
-                      align="left"
-                      sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
-                    >{`${getMonthLabel(selectedMonth)} Expense`}</TableCell>
-                    <TableCell
-                      align="left"
-                      sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
-                    >{`Rs. ${totalAmount.toFixed(2)}`}</TableCell>
-                    <TableCell />
-                  </TableRow>
-                )}
-                <TableRow
-                  sx={{
-                    background: "rgba(30,30,35,1)",
-                    zIndex: 2,
-                    position: "sticky",
-                    bottom: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  <TableCell
-                    colSpan={4}
-                    align="left"
-                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
-                  >
-                    Yearly Total
-                  </TableCell>
-                  <TableCell
-                    align="left"
-                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}
-                  >{`Rs. ${yearlyTotal.toFixed(2)}`}</TableCell>
-                  <TableCell />
-                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 2,
+              mt: 3,
+            }}
+          >
+            <TextField
+              select
+              size="small"
+              value={rowsPerPage}
+              onChange={(e) => {
+                setRowsPerPage(parseInt(e.target.value));
+                setCurrentPage(1);
+              }}
+              sx={{ width: 160 }}
+              label="Rows per Page"
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </TextField>
+            <Pagination
+              count={pagination.totalPages}
+              page={currentPage}
+              onChange={(e, page) => setCurrentPage(page)}
+              color="primary"
+            />
+          </Box>
         </CardContent>
       </Card>
       <EditExpenseModal

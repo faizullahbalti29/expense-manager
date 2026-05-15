@@ -13,14 +13,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle"; // Assuming icons-material is installed
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 const EXPENSE_CATEGORIES = [
   { label: "Hostel Fees", value: "Hostel Fees" },
   { label: "Metro Charge", value: "Metro Charge" },
   { label: "Food", value: "Food" },
   { label: "Travel", value: "Travel" },
   { label: "Entertainment", value: "Entertainment" },
-  {label:"Shopping", value: "Shopping" },
+  { label: "Shopping", value: "Shopping" },
   { label: "Other", value: "Other" },
 ];
 
@@ -38,7 +38,7 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
       name: isCustomName ? customName : name,
       amount: parseFloat(amount),
       date: new Date().toISOString(),
-      description
+      description,
     });
 
     setName("");
@@ -64,8 +64,8 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
         background: "rgba(30,30,35,0.6)",
         backdropFilter: "blur(10px)",
         border: "1px solid rgba(255,255,255,0.08)",
-        width: '100%',
-        boxSizing:"border-box"
+        width: "100%",
+        boxSizing: "border-box",
       }}
     >
       <CardContent>
@@ -79,33 +79,38 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}> 
-                <TextField
-                  select
-                  fullWidth
-                  value={name}
-                  onChange={handleNameChange}
-                  variant="outlined"
-                  placeholder="Select Expense Type.."
-                  label="Select Expense Type"
-                  sx={{ minWidth: 300 }}
-                  SelectProps={{
-                    MenuProps: {
-                      disableScrollLock: true
-                    }
-                  }}
-                >
-                  {EXPENSE_CATEGORIES.map((option, index) => (
-                    <MenuItem key={index} value={option.value} sx={{
-                      fontSize:"14px"
-                    }}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
+            <Grid item xs={12} md={6}>
+              <TextField
+                select
+                fullWidth
+                value={name}
+                onChange={handleNameChange}
+                variant="outlined"
+                placeholder="Select Expense Type.."
+                label="Select Expense Type"
+                sx={{ minWidth: 300 }}
+                SelectProps={{
+                  MenuProps: {
+                    disableScrollLock: true,
+                  },
+                }}
+              >
+                {EXPENSE_CATEGORIES.map((option, index) => (
+                  <MenuItem
+                    key={index}
+                    value={option.value}
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
-           {isCustomName && <Grid item xs={12} md={6}> 
-                  <TextField
+            {isCustomName && (
+              <Grid item xs={12} md={6}>
+                <TextField
                   fullWidth
                   label="Expense Name"
                   placeholder="e.g. Lunch"
@@ -113,8 +118,9 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                   onChange={(e) => setCustomName(e.target.value)}
                   variant="outlined"
                 />
-            </Grid>}
-            
+              </Grid>
+            )}
+
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -146,7 +152,13 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                 type="submit"
                 variant="contained"
                 size="large"
-                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <AddIcon />}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    <AddIcon />
+                  )
+                }
                 disabled={!name || !amount || loading}
                 sx={{ px: 4 }}
               >
