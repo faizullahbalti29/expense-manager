@@ -146,7 +146,19 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
                 setSelectedMonth(e.target.value);
                 setCurrentPage(1);
               }}
-              sx={{ width: 200 }}
+              SelectProps={{
+                MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+              }}
+              sx={{
+                width: {
+                  xs: "100%",
+                  md: "300px",
+
+                  "& .MuiInputBase-root": {
+                    padding: "0px 0px",
+                  },
+                },
+              }}
               label="Filter by Month"
             >
               {MONTHS.map((month) => (
@@ -166,10 +178,20 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
               maxWidth: "100%",
               maxHeight: 500,
               overflowY: "auto",
+              overflowX: "auto",
             }}
           >
             <Table
-              sx={{ width: "100%", tableLayout: "fixed" }}
+              sx={{
+                width: "100%",
+                minWidth: 800,
+                tableLayout: "auto",
+                "& td, & th": {
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                },
+              }}
               aria-label="expense table"
             >
               <TableHead
@@ -277,7 +299,10 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
                 setRowsPerPage(parseInt(e.target.value));
                 setCurrentPage(1);
               }}
-              sx={{ width: 160 }}
+              SelectProps={{
+                MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+              }}
+              sx={{ width: { xs: "100%", sm: 160 } }}
               label="Rows per Page"
             >
               <MenuItem value={5}>5</MenuItem>
@@ -291,6 +316,11 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
               page={currentPage}
               onChange={(e, page) => setCurrentPage(page)}
               color="primary"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                display: "flex",
+                justifyContent: { xs: "center", sm: "flex-end" },
+              }}
             />
           </Box>
         </CardContent>

@@ -162,7 +162,7 @@ export default function LoginPage() {
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
               <Box sx={{ textAlign: "center", mt: 2 }}>
-                {/* <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography variant="body2" sx={{ mb: 1 }}>
                   Don't have an account?{" "}
                   <Link
                     href="/register"
@@ -175,7 +175,7 @@ export default function LoginPage() {
                   >
                     Sign up
                   </Link>
-                </Typography> */}
+                </Typography>
                 {/* <Link
                   href="/change-password"
                   variant="body2"

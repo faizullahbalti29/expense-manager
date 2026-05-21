@@ -78,8 +78,19 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
           Add New Expense
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+          <Box
+            sx={{
+              width: "100%",
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+                md: "1fr 1fr 1fr 1fr",
+              },
+            }}
+          >
+            <Box>
               <TextField
                 select
                 fullWidth
@@ -88,7 +99,7 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                 variant="outlined"
                 placeholder="Select Expense Type.."
                 label="Select Expense Type"
-                sx={{ minWidth: 300 }}
+                sx={{ flex: 1 }}
                 SelectProps={{
                   MenuProps: {
                     disableScrollLock: true,
@@ -107,9 +118,9 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid>
+            </Box>
             {isCustomName && (
-              <Grid item xs={12} md={6}>
+              <Box sx={{ flex: 1, mt: 2 }}>
                 <TextField
                   fullWidth
                   label="Expense Name"
@@ -118,10 +129,10 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                   onChange={(e) => setCustomName(e.target.value)}
                   variant="outlined"
                 />
-              </Grid>
+              </Box>
             )}
 
-            <Grid item xs={12} md={6}>
+            <Box sx={{}}>
               <TextField
                 fullWidth
                 label="Description"
@@ -131,8 +142,8 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                 onChange={(e) => setDescription(e.target.value)}
                 variant="outlined"
               />
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Box>
+            <Box sx={{}}>
               <TextField
                 fullWidth
                 label="Amount"
@@ -142,30 +153,24 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
                 onChange={(e) => setAmount(e.target.value)}
                 variant="outlined"
               />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}
+            </Box>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              startIcon={
+                loading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <AddIcon />
+                )
+              }
+              disabled={!name || !amount || loading}
+              sx={{ px: 4, flex: 1 }}
             >
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                startIcon={
-                  loading ? (
-                    <CircularProgress size={20} color="inherit" />
-                  ) : (
-                    <AddIcon />
-                  )
-                }
-                disabled={!name || !amount || loading}
-                sx={{ px: 4 }}
-              >
-                {loading ? "Saving..." : "Add Expense"}
-              </Button>
-            </Grid>
-          </Grid>
+              {loading ? "Saving..." : "Add Expense"}
+            </Button>
+          </Box>
         </Box>
       </CardContent>
     </Card>
