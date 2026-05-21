@@ -140,7 +140,6 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
             </Typography>
             <TextField
               select
-              size="small"
               value={selectedMonth}
               onChange={(e) => {
                 setSelectedMonth(e.target.value);
@@ -153,10 +152,6 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
                 width: {
                   xs: "100%",
                   md: "300px",
-
-                  "& .MuiInputBase-root": {
-                    padding: "0px 0px",
-                  },
                 },
               }}
               label="Filter by Month"
@@ -292,9 +287,8 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
             }}
           >
             <TextField
-              select
-              size="small"
               value={rowsPerPage}
+              select
               onChange={(e) => {
                 setRowsPerPage(parseInt(e.target.value));
                 setCurrentPage(1);
