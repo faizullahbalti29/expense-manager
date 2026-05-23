@@ -21,6 +21,7 @@ import {
   ListItemText,
   IconButton,
   Divider,
+  Alert,
 } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import LockResetIcon from "@mui/icons-material/LockReset";
@@ -39,7 +40,7 @@ export default function Dashboard() {
   const [statsRefreshKey, setStatsRefreshKey] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
+  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
   // Initial Auth Check and Data Load
   useEffect(() => {
     setIsClient(true);
@@ -110,9 +111,23 @@ export default function Dashboard() {
         const newExpense = await res.json();
         setExpenses((prev) => [newExpense, ...prev]);
         setStatsRefreshKey((prev) => prev + 1);
+        setAlert({
+          open: true,
+          type: "success",
+          message: "Expense added successfully!",
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        // console.log(await res.json());
+        const parsedRes = await res.json();
+        setAlert({
+          open: true,
+          type: "error",
+          message: parsedRes?.error || "Failed to add expense",
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch (error) {
-      console.log("catch has runned");
       console.error("Error adding expense:", error);
     } finally {
       setAddingExpense(false);
@@ -134,6 +149,20 @@ export default function Dashboard() {
       if (res.ok) {
         setExpenses((prev) => prev.filter((expense) => expense._id !== id));
         setStatsRefreshKey((prev) => prev + 1);
+        setAlert({
+          open: true,
+          type: "success",
+          message: "Expense deleted successfully!",
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const parsedRes = await res.json();
+        setAlert({
+          open: true,
+          type: "error",
+          message: parsedRes?.error || "Failed to delete expense",
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch (error) {
       console.error("Error deleting expense:", error);
@@ -165,6 +194,20 @@ export default function Dashboard() {
           prev.map((expense) => (expense._id === data._id ? data : expense)),
         );
         setStatsRefreshKey((prev) => prev + 1);
+        setAlert({
+          open: true,
+          type: "success",
+          message: "Expense updated successfully!",
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const parsedRes = await res.json();
+        setAlert({
+          open: true,
+          type: "error",
+          message: parsedRes?.error || "Failed to update expense",
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     } catch (error) {
       console.error("Error updating expense:", error);
@@ -313,6 +356,18 @@ export default function Dashboard() {
         </Box>
       </Drawer>
 
+      {alert.open && (
+        <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
+          <Alert
+            severity={alert.type}
+            sx={{ mb: 2, borderRadius: 2 }}
+            onClose={() => setAlert({ open: false, message: "", type: "" })}
+            open={alert.open}
+          >
+            {alert.message}
+          </Alert>
+        </Container>
+      )}
       <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
         <ExpenseStats statsRefreshKey={statsRefreshKey} />
       </Container>
