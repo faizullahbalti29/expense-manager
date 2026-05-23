@@ -26,6 +26,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -44,8 +47,10 @@ export default function RegisterPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+    if (!passwordPattern.test(password)) {
+      setError(
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+      );
       setLoading(false);
       return;
     }
@@ -199,7 +204,11 @@ export default function RegisterPage() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2, py: 1.5, fontSize: "1rem" }}
                 disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : null
+                }
               >
                 {loading ? "Creating Account..." : "Sign Up"}
               </Button>

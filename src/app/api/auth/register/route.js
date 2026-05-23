@@ -13,7 +13,20 @@ export async function POST(req) {
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "Please provide name, email, and password" },
-        { status: 400 }
+        { status: 400 },
+      );
+    }
+
+    const passwordPattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+
+    if (!passwordPattern.test(password)) {
+      return NextResponse.json(
+        {
+          error:
+            "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+        },
+        { status: 400 },
       );
     }
 
@@ -22,7 +35,7 @@ export async function POST(req) {
     if (existingUser) {
       return NextResponse.json(
         { error: "User with this email already exists" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -46,7 +59,7 @@ export async function POST(req) {
           email: user.email,
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Registration error:", error);

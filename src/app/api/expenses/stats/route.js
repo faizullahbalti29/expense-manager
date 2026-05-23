@@ -76,7 +76,7 @@ export async function GET(req) {
         },
       },
     ]);
-    console.log(yearlyTotal, "Yearly Total");
+    // console.log(yearlyTotal, "Yearly Total");
 
     return NextResponse.json({
       monthlyTotal: monthTotal[0]?.total || 0,

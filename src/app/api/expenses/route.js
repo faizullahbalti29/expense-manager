@@ -79,12 +79,18 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    console.log("expense from backend", body);
+    if (body.amount <= 0) {
+      return NextResponse.json(
+        { error: "Amount must be greater than zero" },
+        { status: 400 },
+      );
+    }
+    // console.log("expense from backend", body);
     const expense = await Expense.create({
       ...body,
       user: user.userId,
     });
-    console.log("Created expense:", expense);
+    // console.log("Created expense:", expense);
     return NextResponse.json(expense, { status: 201 });
   } catch (error) {
     console.error("Error creating expense from the post method:", error);

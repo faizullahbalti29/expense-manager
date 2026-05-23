@@ -94,7 +94,7 @@ export default function Dashboard() {
   const addExpenseHandler = async (expenseData) => {
     setAddingExpense(true);
     try {
-      console.log(expenseData);
+      // console.log(expenseData);
       const res = await fetch("/api/expenses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -112,6 +112,7 @@ export default function Dashboard() {
         setStatsRefreshKey((prev) => prev + 1);
       }
     } catch (error) {
+      console.log("catch has runned");
       console.error("Error adding expense:", error);
     } finally {
       setAddingExpense(false);
