@@ -10,9 +10,10 @@ const inter = Inter({
 export const metadata = {
   title: "My Expense Manager",
   description: "Track your expenses in style",
-  icons: "/favicon.png",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
