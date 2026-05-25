@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
   CardContent,
@@ -19,10 +20,20 @@ import {
   IconButton,
   Tooltip,
   Pagination,
+  Alert,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditExpenseModal from "./EditExpenseModal";
+import ConfirmDialog from "../UI/ConfirmDialog";
+import {
+  deleteExpense,
+  fetchExpenses,
+  fetchExpenseStats,
+  setExpenseMonthFilter,
+  setExpensePage,
+  setExpenseLimit,
+} from "../../store/expensesSlice";
 
 const MONTHS = [
   { label: "All Months", value: "all" },
@@ -40,23 +51,23 @@ const MONTHS = [
   { label: "December", value: "11" },
 ];
 
-export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
+export default function ExpenseTable() {
   const router = useRouter();
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().getMonth().toString(),
-  );
-  const [filteredExpenses, setFilteredExpenses] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalCount: 0,
-    limit: 10,
-  });
-  const [refreshKey, setRefreshKey] = useState(0);
+  const dispatch = useDispatch();
+  const {
+    items: filteredExpenses,
+    pagination,
+    filters,
+    loading,
+    error,
+  } = useSelector((state) => state.expenses);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState(null);
+  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const [deletingExpense, setDeletingExpense] = useState(false);
+  const [updatingExpense, setUpdatingExpense] = useState(false);
 
   const handleUnauthorized = () => {
     if (typeof window !== "undefined") {
@@ -65,47 +76,69 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
     }
     router.push("/login");
   };
-  // Fetch filtered expenses from backend when month, page, or rowsPerPage changes
+
   useEffect(() => {
-    const fetchFilteredExpenses = async () => {
-      try {
-        const monthQuery =
-          selectedMonth === "all" ? "" : `month=${selectedMonth}&`;
-        const res = await fetch(
-          `/api/expenses?${monthQuery}page=${currentPage}&limit=${rowsPerPage}`,
-        );
-        if (res.status === 401) {
-          handleUnauthorized();
-          return;
-        }
-        if (res.ok) {
-          const result = await res.json();
-          setFilteredExpenses(result.data);
-          setPagination(result.pagination);
-        }
-      } catch (error) {
-        console.error("Error fetching filtered expenses:", error);
-      }
-    };
-    fetchFilteredExpenses();
-  }, [selectedMonth, currentPage, rowsPerPage, refreshKey, expenses]);
+    dispatch(
+      fetchExpenses({
+        month: filters.month,
+        page: pagination.currentPage,
+        limit: pagination.limit,
+      }),
+    );
+  }, [dispatch, filters.month, pagination.currentPage, pagination.limit]);
   const handleEditClick = (expense) => {
     setSelectedExpense(expense);
     setEditModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    await onDelete(id);
-    setCurrentPage(1);
-    setRefreshKey((prev) => prev + 1);
+  const openDeleteConfirm = (expense) => {
+    setExpenseToDelete(expense);
+    setConfirmOpen(true);
   };
 
-  const handleUpdateSubmit = async (updatedExpense) => {
-    await onUpdate(updatedExpense);
-    // Refresh current page and data after update
-    setCurrentPage(1);
-    setRefreshKey((prev) => prev + 1);
+  const handleDeleteConfirm = async () => {
+    if (!expenseToDelete) return;
+
+    setDeletingExpense(true);
+    try {
+      await dispatch(
+        deleteExpense(expenseToDelete._id || expenseToDelete.id),
+      ).unwrap();
+      setAlert({
+        open: true,
+        type: "success",
+        message: "Expense deleted successfully!",
+      });
+      dispatch(
+        fetchExpenses({
+          month: filters.month,
+          page: pagination.currentPage,
+          limit: pagination.limit,
+        }),
+      );
+      dispatch(fetchExpenseStats());
+      setConfirmOpen(false);
+      setExpenseToDelete(null);
+    } catch (error) {
+      if (error?.message === "Unauthorized") {
+        handleUnauthorized();
+        return;
+      }
+      setAlert({
+        open: true,
+        type: "error",
+        message: error?.message || "Failed to delete expense",
+      });
+    } finally {
+      setDeletingExpense(false);
+    }
   };
+
+  const handleDeleteCancel = () => {
+    setConfirmOpen(false);
+    setExpenseToDelete(null);
+  };
+
   const getMonthLabel = (monthValue) => {
     const month = MONTHS.find((m) => m.value === monthValue);
     return month ? month.label : "";
@@ -121,6 +154,15 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
         }}
       >
         <CardContent>
+          {alert.open && (
+            <Alert
+              severity={alert.type}
+              sx={{ mb: 1, borderRadius: 2 }}
+              onClose={() => setAlert({ open: false, type: "", message: "" })}
+            >
+              {alert.message}
+            </Alert>
+          )}
           <Box
             sx={{
               display: "flex",
@@ -140,10 +182,10 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
             </Typography>
             <TextField
               select
-              value={selectedMonth}
+              value={filters.month}
               onChange={(e) => {
-                setSelectedMonth(e.target.value);
-                setCurrentPage(1);
+                dispatch(setExpenseMonthFilter(e.target.value));
+                dispatch(setExpensePage(1));
               }}
               SelectProps={{
                 MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
@@ -250,9 +292,7 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
                         <Tooltip title="Delete Expense">
                           <IconButton
                             color="error"
-                            onClick={() =>
-                              handleDelete(expense._id || expense.id)
-                            }
+                            onClick={() => openDeleteConfirm(expense)}
                             size="small"
                           >
                             <DeleteIcon />
@@ -287,11 +327,11 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
             }}
           >
             <TextField
-              value={rowsPerPage}
+              value={pagination.limit}
               select
               onChange={(e) => {
-                setRowsPerPage(parseInt(e.target.value));
-                setCurrentPage(1);
+                dispatch(setExpenseLimit(parseInt(e.target.value)));
+                dispatch(setExpensePage(1));
               }}
               SelectProps={{
                 MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
@@ -307,8 +347,8 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
             </TextField>
             <Pagination
               count={pagination.totalPages}
-              page={currentPage}
-              onChange={(e, page) => setCurrentPage(page)}
+              page={pagination.currentPage}
+              onChange={(e, page) => dispatch(setExpensePage(page))}
               color="primary"
               sx={{
                 width: { xs: "100%", sm: "auto" },
@@ -323,7 +363,21 @@ export default function ExpenseTable({ expenses, onDelete, onUpdate }) {
         open={editModalOpen}
         handleClose={() => setEditModalOpen(false)}
         expense={selectedExpense}
-        handleUpdate={handleUpdateSubmit}
+        setAlert={setAlert}
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete expense?"
+        description={
+          expenseToDelete
+            ? `Are you sure you want to delete "${expenseToDelete.name}" for Rs. ${expenseToDelete.amount.toFixed(2)}? This action cannot be undone.`
+            : "Are you sure you want to delete this expense?"
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        loading={deletingExpense}
       />
     </>
   );

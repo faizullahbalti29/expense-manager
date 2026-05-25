@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Card,
@@ -11,9 +13,16 @@ import {
   Button,
   Grid,
   CircularProgress,
+  Container,
+  Alert,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle"; // Assuming icons-material is installed
 import AddIcon from "@mui/icons-material/Add";
+import {
+  addExpense,
+  fetchExpenses,
+  fetchExpenseStats,
+} from "../../store/expensesSlice";
 const EXPENSE_CATEGORIES = [
   { label: "Hostel Fees", value: "Hostel Fees" },
   { label: "Metro Charge", value: "Metro Charge" },
@@ -24,17 +33,63 @@ const EXPENSE_CATEGORIES = [
   { label: "Other", value: "Other" },
 ];
 
-export default function ExpenseForm({ onAddExpense, loading = false }) {
+export default function ExpenseForm() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { pagination, filters } = useSelector((state) => state.expenses);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [isCustomName, setIsCustomName] = useState(false);
   const [customName, setCustomName] = useState("");
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const handleUnauthorized = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
+    }
+    router.push("/login");
+  };
+
+  const addExpenseHandler = async (expenseData) => {
+    setLoading(true);
+    try {
+      const result = await dispatch(addExpense(expenseData)).unwrap();
+      setAlert({
+        open: true,
+        type: "success",
+        message: "Expense added successfully!",
+      });
+      dispatch(
+        fetchExpenses({
+          month: filters.month,
+          page: pagination.currentPage,
+          limit: pagination.limit,
+        }),
+      );
+      dispatch(fetchExpenseStats());
+      // window.scrollTo({ top: 0, behavior: "smooth" });
+      return result;
+    } catch (error) {
+      if (error?.message === "Unauthorized") {
+        handleUnauthorized();
+        return;
+      }
+      setAlert({
+        open: true,
+        type: "error",
+        message: error?.message || "Failed to add expense",
+      });
+      // window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !amount) return;
-    onAddExpense({
-      id: Date.now().toString(),
+    await addExpenseHandler({
       name: isCustomName ? customName : name,
       amount: parseFloat(amount),
       date: new Date().toISOString(),
@@ -77,6 +132,17 @@ export default function ExpenseForm({ onAddExpense, loading = false }) {
         >
           Add New Expense
         </Typography>
+        {alert.open && (
+          // <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
+          <Alert
+            severity={alert.type}
+            sx={{ mb: 2, borderRadius: 2 }}
+            onClose={() => setAlert({ open: false, message: "", type: "" })}
+            open={alert.open}
+          >
+            {alert.message}
+          </Alert>
+        )}
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Box
             sx={{

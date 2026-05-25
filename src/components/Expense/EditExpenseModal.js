@@ -1,13 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Modal,
   Box,
   Typography,
   TextField,
   Button,
+  Alert,
 } from "@mui/material";
+import {
+  updateExpense,
+  fetchExpenses,
+  fetchExpenseStats,
+} from "../../store/expensesSlice";
 
 const modalStyle = {
   position: "absolute",
@@ -26,12 +34,17 @@ export default function EditExpenseModal({
   open,
   handleClose,
   expense,
-  handleUpdate,
+  setAlert,
 }) {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { pagination, filters } = useSelector((state) => state.expenses);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
+  const [updatingExpense, setUpdatingExpense] = useState(false);
+  // const [alert, setAlert] = useState({ open: false, type: "", message: "" });
 
   useEffect(() => {
     if (expense) {
@@ -44,17 +57,58 @@ export default function EditExpenseModal({
       setDate(isoDate);
     }
   }, [expense]);
+  const handleUnauthorized = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
+    }
+    router.push("/login");
+  };
 
-  const handleSubmit = (e) => {
+  const updateExpenseHandler = async (updatedExpense) => {
+    setUpdatingExpense(true);
+    try {
+      await dispatch(updateExpense(updatedExpense)).unwrap();
+      setAlert({
+        open: true,
+        type: "success",
+        message: "Expense updated successfully!",
+      });
+      dispatch(
+        fetchExpenses({
+          month: filters.month,
+          page: pagination.currentPage,
+          limit: pagination.limit,
+        }),
+      );
+      dispatch(fetchExpenseStats());
+      // window.scrollTo({ top: 0, behavior: "smooth" });
+      handleClose();
+    } catch (error) {
+      if (error?.message === "Unauthorized") {
+        handleUnauthorized();
+        return;
+      }
+      setAlert({
+        open: true,
+        type: "error",
+        message: error?.message || "Failed to update expense",
+      });
+      // window.scrollTo({ top: 0, behavior: "smooth" });
+    } finally {
+      setUpdatingExpense(false);
+    }
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleUpdate({
+    await updateExpenseHandler({
+      id: expense._id,
       ...expense,
       name,
       amount: parseFloat(amount),
       date: new Date(date).toISOString(),
       description,
     });
-    handleClose();
   };
 
   return (
@@ -74,6 +128,15 @@ export default function EditExpenseModal({
         >
           Edit Expense
         </Typography>
+        {/* {alert.open && (
+          <Alert
+            severity={alert.type}
+            sx={{ mb: 2, borderRadius: 2 }}
+            onClose={() => setAlert({ open: false, type: "", message: "" })}
+          >
+            {alert.message}
+          </Alert>
+        )} */}
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -115,8 +178,13 @@ export default function EditExpenseModal({
             <Button onClick={handleClose} color="inherit">
               Cancel
             </Button>
-            <Button type="submit" variant="contained" color="primary">
-              Update
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={updatingExpense}
+            >
+              {updatingExpense ? "Updating..." : "Update"}
             </Button>
           </Box>
         </Box>

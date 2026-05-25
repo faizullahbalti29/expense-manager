@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Card,
@@ -9,69 +10,42 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import { fetchExpenseStats } from "../../store/expensesSlice";
 
-export default function ExpenseStats({ statsRefreshKey }) {
+export default function ExpenseStats() {
   const router = useRouter();
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { stats } = useSelector((state) => state.expenses);
+  const statsLoading = useSelector((state) => state.expenses.stats.loading);
 
-  const handleUnauthorized = () => {
+  const handleUnauthorized = useCallback(() => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("isAuthenticated");
       localStorage.removeItem("user");
     }
     router.push("/login");
-  };
+  }, [router]);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const loadStats = async () => {
       try {
-        const currentMonth = new Date().getMonth();
-        const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-
-        // Fetch current month stats
-        const currentRes = await fetch(
-          `/api/expenses/stats?month=${currentMonth}`,
-        );
-        if (currentRes.status === 401) {
-          handleUnauthorized();
-          return;
-        }
-        const currentData = currentRes.ok ? await currentRes.json() : {};
-
-        // Fetch previous month stats
-        const previousRes = await fetch(
-          `/api/expenses/stats?month=${previousMonth}`,
-        );
-        if (previousRes.status === 401) {
-          handleUnauthorized();
-          return;
-        }
-        const previousData = previousRes.ok ? await previousRes.json() : {};
-
-        setStats({
-          monthlyTotal: currentData.monthlyTotal || 0,
-          yearlyTotal: currentData.yearlyTotal || 0,
-          previousMonthTotal: previousData.monthlyTotal || 0,
-        });
+        await dispatch(fetchExpenseStats()).unwrap();
       } catch (error) {
-        console.error("Error fetching stats:", error);
-      } finally {
-        setLoading(false);
+        if (error?.message === "Unauthorized") {
+          handleUnauthorized();
+        }
       }
     };
 
-    fetchStats();
-    // Refresh stats every minute
-    const interval = setInterval(fetchStats, 60000);
+    loadStats();
+    const interval = setInterval(loadStats, 60000);
     return () => clearInterval(interval);
-  }, [statsRefreshKey]);
+  }, [dispatch, handleUnauthorized]);
 
-  if (loading) {
+  if (statsLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
         <CircularProgress />

@@ -57,7 +57,7 @@ export default function LoginPage() {
       // Login Success
       localStorage.setItem("isAuthenticated", "true"); // Keep for simple client checks
       localStorage.setItem("user", JSON.stringify(data.user));
-      router.push("/dashboard");
+      router.push("/");
     } catch (err) {
       setError("Failed to connect to server");
       setLoading(false);
@@ -157,7 +157,11 @@ export default function LoginPage() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2, py: 1.5, fontSize: "1rem" }}
                 disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                startIcon={
+                  loading ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : null
+                }
               >
                 {loading ? "Signing In..." : "Sign In"}
               </Button>

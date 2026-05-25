@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import ThemeRegistry from "../components/ThemeRegistry/ThemeRegistry";
+import ReduxProvider from "../components/ReduxProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,7 +19,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <ThemeRegistry>
+          <ReduxProvider>{children}</ReduxProvider>
+        </ThemeRegistry>
       </body>
     </html>
   );
