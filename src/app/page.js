@@ -18,6 +18,9 @@ import {
   ListItemText,
   IconButton,
   Divider,
+  Tab,
+  Tabs,
+  useTheme,
 } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import LockResetIcon from "@mui/icons-material/LockReset";
@@ -27,7 +30,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import Dashboard from "./dashboard/page";
-
+import React from "react";
+import LoanDashboard from "@/components/Loan/LoanDashboard";
 export default function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -36,7 +40,12 @@ export default function Home() {
   const [authChecked, setAuthChecked] = useState(false);
   const isClient = typeof window !== "undefined";
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [value, setValue] = useState(0);
+  const theme = useTheme();
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const handleUnauthorized = useCallback(() => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("isAuthenticated");
@@ -221,7 +230,54 @@ export default function Home() {
           </List>
         </Box>
       </Drawer>
-      <Dashboard />
+      <Container
+        maxWidth={false}
+        sx={{ mt: 4, mb: 4 }}
+        // sx={{
+        //   width: "100%",
+        //   bgcolor: theme.palette.background.paper,
+        //   borderRadius: 3,
+        //   p: 0.5,
+        // }}
+      >
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          variant="fullWidth"
+          TabIndicatorProps={{
+            style: {
+              display: "none",
+            },
+          }}
+          sx={{
+            minHeight: 48,
+            backgroundColor: theme.palette.background.paper,
+            borderRadius: 2,
+            "& .MuiTab-root": {
+              textTransform: "none",
+              fontWeight: 600,
+              // borderRadius: 2,
+              minHeight: 48,
+              color: theme.palette.text.secondary,
+              transition: "all 0.25s ease",
+            },
+
+            "& .Mui-selected": {
+              bgcolor: theme.palette.primary.main,
+              color: `${theme.palette.primary.contrastText} !important`,
+            },
+            // "& .MuiTab-root:not(.Mui-selected)": {
+            //   bgcolor: theme.palette.background.paper,
+            //   // color: theme.palette.text.primary,
+            // },
+          }}
+        >
+          <Tab label="Expense" />
+          <Tab label="Loan" />
+        </Tabs>
+      </Container>
+      {value === 0 && <Dashboard />}
+      {value === 1 && <LoanDashboard />}
     </>
   );
 }

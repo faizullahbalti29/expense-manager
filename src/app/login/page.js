@@ -21,9 +21,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  /* eslint-disable no-unused-vars */
-  // const [isLogin, setIsLogin] = useState(true); // Removed logic
-  /* eslint-enable no-unused-vars */
   const router = useRouter();
 
   const handleAuth = async (e) => {

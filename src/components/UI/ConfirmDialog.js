@@ -15,6 +15,7 @@ export default function ConfirmDialog({
   description,
   confirmText = "Confirm",
   cancelText = "Cancel",
+  confirmButtonColor = "error",
   onConfirm,
   onCancel,
   loading = false,
@@ -48,7 +49,7 @@ export default function ConfirmDialog({
           size="medium"
           variant="contained"
           onClick={onConfirm}
-          color="error"
+          color={confirmButtonColor}
           disabled={loading}
           loading={loading}
           loadingPosition="start"

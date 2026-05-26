@@ -163,7 +163,7 @@ export default function ExpenseForm() {
                 value={name}
                 onChange={handleNameChange}
                 variant="outlined"
-                placeholder="Select Expense Type.."
+                placeholder="Select Expense Type"
                 label="Select Expense Type"
                 sx={{ flex: 1 }}
                 SelectProps={{
