@@ -68,7 +68,7 @@ export default function LoanTable() {
   const [deletingLoan, setDeletingLoan] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(null);
   const [loanToUpdate, setLoanToUpdate] = useState(null);
-
+  const [hoveredRow, setHoveredRow] = useState(null);
   const handleUnauthorized = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("isAuthenticated");
@@ -368,6 +368,8 @@ export default function LoanTable() {
                 {loans.length > 0 ? (
                   loans.map((loan) => (
                     <TableRow
+                      onMouseEnter={() => setHoveredRow(loan._id)}
+                      onMouseLeave={() => setHoveredRow(null)}
                       key={loan._id}
                       sx={{
                         "&:last-child td, &:last-child th": { border: 0 },
@@ -379,8 +381,19 @@ export default function LoanTable() {
                       <TableCell component="th" scope="row">
                         {new Date(loan.date).toLocaleDateString()}
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 500 }}>
-                        {loan.beneficiary}
+                      <TableCell
+                        sx={{
+                          fontWeight: 500,
+                          minWidth: 200,
+                          color:
+                            hoveredRow === loan._id
+                              ? "text.primary"
+                              : getLabelColors("payable", "").color,
+                        }}
+                      >
+                        {hoveredRow === loan._id
+                          ? loan.beneficiary
+                          : "Hover to reveal name"}
                       </TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>
                         {loan.description || "Not Provided"}
