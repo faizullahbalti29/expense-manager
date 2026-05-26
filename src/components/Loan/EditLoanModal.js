@@ -38,6 +38,7 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
   const [date, setDate] = useState("");
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (!open || !loan) return;
@@ -45,6 +46,7 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
       setBeneficiary(loan.beneficiary);
       setAmount(loan.amount);
       setType(loan.type);
+      setDescription(loan.description);
       const d = new Date(loan.date);
       const isoDate = d.toISOString().split("T")[0];
       setDate(isoDate);
@@ -73,6 +75,7 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
           amount: parseFloat(amount),
           type,
           date: new Date(date).toISOString(),
+          description,
         }),
       ).unwrap();
 
@@ -156,6 +159,14 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
             {/* <MenuItem value="receivable">Receivable</MenuItem>} */}
             {/* <MenuItem value="payable">Payable</MenuItem> */}
           </TextField>
+          <TextField
+            fullWidth
+            label="Description"
+            variant="outlined"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
           <TextField
             fullWidth
             label="Amount"

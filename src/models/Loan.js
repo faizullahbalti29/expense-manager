@@ -6,6 +6,10 @@ const LoanSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide beneficiary name"],
     },
+    description: {
+      type: String,
+      required: false,
+    },
     amount: {
       type: Number,
       required: [true, "Please provide a loan amount"],

@@ -26,6 +26,7 @@ export default function LoanForm() {
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const [description, setDescription] = useState("");
   const [loanDate, setLoanDate] = useState("");
 
   const handleUnauthorized = () => {
@@ -51,6 +52,7 @@ export default function LoanForm() {
             ? new Date(loanDate).toISOString()
             : new Date().toISOString(),
           status: "not-returned",
+          description,
         }),
       ).unwrap();
 
@@ -72,7 +74,8 @@ export default function LoanForm() {
 
       setBeneficiary("");
       setAmount("");
-      setType("given");
+      setType("");
+      setDescription("");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       if (error?.message === "Unauthorized") {
@@ -128,7 +131,7 @@ export default function LoanForm() {
               gridTemplateColumns: {
                 xs: "1fr",
                 sm: "1fr 1fr",
-                md: "1fr 1fr 1fr 1fr 1fr",
+                md: "1fr 1fr 1fr 1fr",
               },
             }}
           >
@@ -166,6 +169,17 @@ export default function LoanForm() {
                   </MenuItem>
                 ))}
               </TextField>
+            </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Description"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                variant="outlined"
+                required
+              />
             </Box>
             <Box>
               <TextField

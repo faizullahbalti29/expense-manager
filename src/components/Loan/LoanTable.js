@@ -357,6 +357,7 @@ export default function LoanTable() {
                 <TableRow>
                   <TableCell>Date</TableCell>
                   <TableCell>Beneficiary</TableCell>
+                  <TableCell>Description</TableCell>
                   <TableCell>Type</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Amount</TableCell>
@@ -380,6 +381,9 @@ export default function LoanTable() {
                       </TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>
                         {loan.beneficiary}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 500 }}>
+                        {loan.description || "Not Provided"}
                       </TableCell>
                       <TableCell>
                         <Typography
