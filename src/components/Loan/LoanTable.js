@@ -261,54 +261,64 @@ export default function LoanTable() {
             >
               Your Loans
             </Typography>
-            <TextField
-              select
-              value={filters.type}
-              onChange={(e) => {
-                dispatch(setLoanTypeFilter(e.target.value));
-                dispatch(setLoanPage(1));
-              }}
-              SelectProps={{
-                MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
-              }}
+            <Box
               sx={{
                 width: {
                   xs: "100%",
-                  md: "300px",
+                  md: "50%",
                 },
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+                flexWrap: { xs: "wrap", sm: "nowrap" },
               }}
-              label="Filter by Type"
             >
-              {LOAN_TYPES.map((type) => (
-                <MenuItem key={type.value} value={type.value}>
-                  {type.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              value={filters.status}
-              onChange={(e) => {
-                dispatch(setLoanStatusFilter(e.target.value));
-                dispatch(setLoanPage(1));
-              }}
-              SelectProps={{
-                MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
-              }}
-              sx={{
-                width: {
-                  xs: "100%",
-                  md: "300px",
-                },
-              }}
-              label="Filter by Status"
-            >
-              {LOAN_STATUSES.map((status) => (
-                <MenuItem key={status.value} value={status.value}>
-                  {status.label}
-                </MenuItem>
-              ))}
-            </TextField>
+              <TextField
+                select
+                value={filters.type}
+                onChange={(e) => {
+                  dispatch(setLoanTypeFilter(e.target.value));
+                  dispatch(setLoanPage(1));
+                }}
+                SelectProps={{
+                  MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+                }}
+                sx={{
+                  flex: { xs: "", sm: 1 },
+                  width: { xs: "100%", sm: "auto" },
+                  mb: { xs: 1, sm: 0 },
+                }}
+                label="Filter by Type"
+              >
+                {LOAN_TYPES.map((type) => (
+                  <MenuItem key={type.value} value={type.value}>
+                    {type.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                value={filters.status}
+                onChange={(e) => {
+                  dispatch(setLoanStatusFilter(e.target.value));
+                  dispatch(setLoanPage(1));
+                }}
+                SelectProps={{
+                  MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+                }}
+                sx={{
+                  flex: { xs: "", sm: 1 },
+                  width: { xs: "100%", sm: "auto" },
+                }}
+                label="Filter by Status"
+              >
+                {LOAN_STATUSES.map((status) => (
+                  <MenuItem key={status.value} value={status.value}>
+                    {status.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
           </Box>
 
           <TableContainer
