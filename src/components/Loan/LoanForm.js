@@ -76,6 +76,7 @@ export default function LoanForm() {
       setAmount("");
       setType("");
       setDescription("");
+      setLoanDate("");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       if (error?.message === "Unauthorized") {

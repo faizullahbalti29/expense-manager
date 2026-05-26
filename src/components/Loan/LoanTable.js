@@ -281,7 +281,10 @@ export default function LoanTable() {
                   dispatch(setLoanPage(1));
                 }}
                 SelectProps={{
-                  MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+                  MenuProps: {
+                    PaperProps: { style: { maxHeight: 250 } },
+                    disableScrollLock: true,
+                  },
                 }}
                 sx={{
                   flex: { xs: "", sm: 1 },
@@ -304,7 +307,10 @@ export default function LoanTable() {
                   dispatch(setLoanPage(1));
                 }}
                 SelectProps={{
-                  MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+                  MenuProps: {
+                    PaperProps: { style: { maxHeight: 250 } },
+                    disableScrollLock: true,
+                  },
                 }}
                 sx={{
                   flex: { xs: "", sm: 1 },
@@ -503,7 +509,7 @@ export default function LoanTable() {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={7}
                       align="center"
                       sx={{ py: 4, color: "text.secondary" }}
                     >
@@ -533,7 +539,10 @@ export default function LoanTable() {
                 dispatch(setLoanPage(1));
               }}
               SelectProps={{
-                MenuProps: { PaperProps: { style: { maxHeight: 250 } } },
+                MenuProps: {
+                  PaperProps: { style: { maxHeight: 250 } },
+                  disableScrollLock: true,
+                },
               }}
               sx={{ width: { xs: "100%", sm: 160 } }}
               label="Rows per Page"

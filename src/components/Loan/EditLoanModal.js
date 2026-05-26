@@ -112,7 +112,12 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
   };
 
   return (
-    <Modal open={open} onClose={handleClose} aria-labelledby="edit-loan-modal">
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="edit-loan-modal"
+      disableScrollLock
+    >
       <Box sx={modalStyle}>
         <Typography
           id="edit-loan-modal"
@@ -165,7 +170,6 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
             variant="outlined"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            required
           />
           <TextField
             fullWidth

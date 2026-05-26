@@ -117,6 +117,7 @@ export default function EditExpenseModal({
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      disableScrollLock
     >
       <Box sx={modalStyle}>
         <Typography
