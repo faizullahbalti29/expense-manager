@@ -1,21 +1,25 @@
 # Expense Manager
 
-A full-stack Expense Manager application built with Next.js 15, React 19, MongoDB, and Material UI. It helps users manage their daily expenses securely, offering features to add, update, delete, and view statistics for personal expenses.
+A full-stack Expense Manager application built with Next.js 16, React 19, MongoDB, and Material UI. It helps users manage both personal expenses and loan records, with secure authentication and a modern dashboard experience.
 
 ## Features
 
-- **User Authentication:** Secure registration, login, and password management (Forgot/Reset/Change password) using JWT.
-- **Expense Tracking:** Create, read, update, and delete expenses effortlessly.
-- **Dashboard & Statistics:** View comprehensive expense statistics and a categorized breakdown of your spending.
-- **Responsive UI:** A beautiful and modern user interface built with Material UI (`@mui/material`), optimized for both desktop and mobile devices.
-- **Secure Backend:** API routes protected by JSON Web Tokens (JWT) ensuring that users only access their own data.
+- **User Authentication:** Secure registration, login, and change password with JWT-based authentication.
+- **Expense Management:** Add, edit, delete, and list expenses with date and category support.
+- **Loan Management:** Track both payable and receivable loans, including loan status and loan statistics.
+- **Tabbed Dashboard:** Switch between Expense and Loan views using a modern tabbed interface.
+- **Statistics:** View aggregated expense and loan metrics on the dashboard.
+- **Responsive UI:** Built with Material UI and optimized for desktop and mobile screens.
+- **Redux Toolkit State:** Client state management for expenses and loans via Redux Toolkit.
+- **Secure Backend:** Next.js API routes protected by JWT, so each user only sees their own data.
 
 ## Tech Stack
 
-- **Frontend:** Next.js 15 (App Router), React 19, Material UI, Emotion
+- **Frontend:** Next.js 16 (App Router), React 19, Material UI, Emotion
+- **State Management:** Redux Toolkit, React Redux
 - **Backend:** Next.js API Routes
 - **Database:** MongoDB, Mongoose
-- **Authentication:** JWT (jsonwebtoken, jose), bcryptjs
+- **Authentication:** JWT (`jsonwebtoken`, `jose`), `bcryptjs`
 
 ## Getting Started
 
@@ -25,11 +29,12 @@ Follow these steps to set up the project locally.
 
 - Node.js (v18.x or later)
 - npm, yarn, or pnpm
-- A MongoDB database connection URI (e.g., MongoDB Atlas or a local instance)
+- A MongoDB connection URI (e.g., MongoDB Atlas or a local instance)
 
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd expense-manager
@@ -42,12 +47,11 @@ Follow these steps to set up the project locally.
 
 ### Environment Variables
 
-Create a `.env` file in the root of the project and add the following environment variables:
+Create a `.env` file in the project root and add:
 
 ```env
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
-# Additional environment variables as required by the application
 ```
 
 ### Run Locally
@@ -58,25 +62,31 @@ Start the Next.js development server:
 npm run dev
 ```
 
-The application will be available at [http://localhost:3000](http://localhost:3000).
+The application runs at [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
-- `/src/app` - Contains the Next.js App Router pages (`dashboard`, `login`, `register`, etc.) and API routes (`/api`).
-- `/src/components` - Reusable UI components (Expense form, tables, statistics, etc.).
-- `/src/lib` - Utility functions, including database connection setup.
-- `/src/models` - Mongoose database schemas (`User.js`, `Expense.js`).
+- `/src/app` - Next.js App Router pages and API route definitions.
+- `/src/components` - UI components for expenses, loans, dashboards, and layout.
+- `/src/lib` - Database utility helpers and connection setup.
+- `/src/models` - Mongoose schemas for `User`, `Expense`, and `Loan`.
+- `/src/store` - Redux Toolkit slices and store configuration.
 
 ## API Endpoints
 
 - `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Authenticate user and issue JWT
 - `POST /api/auth/change-password` - Change the authenticated user's password
-- `GET /api/expenses` - Get user's expenses
+- `GET /api/expenses` - Get authenticated user's expenses
 - `POST /api/expenses` - Create a new expense
-- `PUT /api/expenses` - Update an expense
+- `PUT /api/expenses` - Update an existing expense
 - `DELETE /api/expenses` - Delete an expense
 - `GET /api/expenses/stats` - Get aggregated expense statistics
+- `GET /api/loans` - Get authenticated user's loans
+- `POST /api/loans` - Create a new loan record
+- `PUT /api/loans` - Update an existing loan record
+- `DELETE /api/loans` - Delete a loan record
+- `GET /api/loans/stats` - Get aggregated loan statistics
 
 ## License
 
