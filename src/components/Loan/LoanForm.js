@@ -26,6 +26,7 @@ export default function LoanForm() {
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const [loanDate, setLoanDate] = useState("");
 
   const handleUnauthorized = () => {
     if (typeof window !== "undefined") {
@@ -46,7 +47,9 @@ export default function LoanForm() {
           beneficiary,
           amount: parseFloat(amount),
           type,
-          date: new Date().toISOString(),
+          date: loanDate
+            ? new Date(loanDate).toISOString()
+            : new Date().toISOString(),
           status: "not-returned",
         }),
       ).unwrap();
@@ -125,7 +128,7 @@ export default function LoanForm() {
               gridTemplateColumns: {
                 xs: "1fr",
                 sm: "1fr 1fr",
-                md: "1fr 1fr 1fr 1fr",
+                md: "1fr 1fr 1fr 1fr 1fr",
               },
             }}
           >
@@ -163,6 +166,17 @@ export default function LoanForm() {
                   </MenuItem>
                 ))}
               </TextField>
+            </Box>
+            <Box>
+              <TextField
+                type="date"
+                fullWidth
+                label="Date"
+                InputLabelProps={{ shrink: true }}
+                value={loanDate}
+                onChange={(e) => setLoanDate(e.target.value)}
+                required
+              />
             </Box>
 
             <Box>

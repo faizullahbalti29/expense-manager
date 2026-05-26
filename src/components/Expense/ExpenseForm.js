@@ -42,7 +42,9 @@ export default function ExpenseForm() {
   const [description, setDescription] = useState("");
   const [isCustomName, setIsCustomName] = useState(false);
   const [customName, setCustomName] = useState("");
+  const [expenseDate, setExpenseDate] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [alert, setAlert] = useState({ open: false, type: "", message: "" });
   const handleUnauthorized = () => {
     if (typeof window !== "undefined") {
@@ -92,13 +94,17 @@ export default function ExpenseForm() {
     await addExpenseHandler({
       name: isCustomName ? customName : name,
       amount: parseFloat(amount),
-      date: new Date().toISOString(),
+      date: expenseDate
+        ? new Date(expenseDate).toISOString()
+        : new Date().toISOString(),
       description,
     });
 
     setName("");
     setAmount("");
     setDescription("");
+    setExpenseDate("");
+    setCustomName("");
     setIsCustomName(false);
   };
 
@@ -152,7 +158,7 @@ export default function ExpenseForm() {
               gridTemplateColumns: {
                 xs: "1fr",
                 sm: "1fr 1fr",
-                md: "1fr 1fr 1fr 1fr",
+                md: "1fr 1fr 1fr 1fr 1fr",
               },
             }}
           >
@@ -220,6 +226,15 @@ export default function ExpenseForm() {
                 variant="outlined"
               />
             </Box>
+            <TextField
+              type="date"
+              fullWidth
+              label="Date"
+              InputLabelProps={{ shrink: true }}
+              value={expenseDate}
+              onChange={(e) => setExpenseDate(e.target.value)}
+              required
+            />
             <Button
               type="submit"
               variant="contained"
