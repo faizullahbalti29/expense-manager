@@ -57,7 +57,7 @@ export default function Dashboard() {
     <Box
       sx={{
         width: "100%",
-        hight: "100vh",
+        height: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
