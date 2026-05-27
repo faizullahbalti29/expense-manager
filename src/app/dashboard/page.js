@@ -37,19 +37,33 @@ export default function Dashboard() {
   const [authChecked, setAuthChecked] = useState(false);
   const isClient = typeof window !== "undefined";
   const [drawerOpen, setDrawerOpen] = useState(false);
+  useEffect(() => {
+    router.replace("/");
+  }, []);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
-        <ExpenseStats />
-      </Container>
+    // <Box sx={{ flexGrow: 1 }}>
+    //   <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
+    //     <ExpenseStats />
+    //   </Container>
 
-      <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
-        <ExpenseForm />
-      </Container>
-      <Container maxWidth={false} sx={{ mt: 2, mb: 4 }}>
-        <ExpenseTable />
-      </Container>
+    //   <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
+    //     <ExpenseForm />
+    //   </Container>
+    //   <Container maxWidth={false} sx={{ mt: 2, mb: 4 }}>
+    //     <ExpenseTable />
+    //   </Container>
+    // </Box>
+    <Box
+      sx={{
+        width: "100%",
+        hight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <CircularProgress />
     </Box>
   );
 }
