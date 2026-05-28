@@ -3,16 +3,11 @@
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import { fetchExpenseStats } from "../../store/expensesSlice";
 
 export default function ExpenseStats() {
@@ -46,11 +41,7 @@ export default function ExpenseStats() {
   }, [dispatch, handleUnauthorized]);
 
   if (statsLoading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <StatsTableSkeleton showStats statsCount={3} showTable={false} />;
   }
 
   return (

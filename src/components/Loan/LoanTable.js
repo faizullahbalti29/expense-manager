@@ -21,8 +21,8 @@ import {
   Tooltip,
   Pagination,
   Alert,
-  CircularProgress,
 } from "@mui/material";
+import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmDialog from "../UI/ConfirmDialog";
@@ -223,6 +223,17 @@ export default function LoanTable() {
       };
     }
   };
+
+  if (loading) {
+    return (
+      <StatsTableSkeleton
+        showStats={false}
+        showTable
+        tableColumns={7}
+        rows={5}
+      />
+    );
+  }
 
   return (
     <>

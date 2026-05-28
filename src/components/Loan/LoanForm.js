@@ -83,10 +83,11 @@ export default function LoanForm() {
         handleUnauthorized();
         return;
       }
+      console.log(error);
       setAlert({
         open: true,
         type: "error",
-        message: error?.message || "Failed to add loan",
+        message: error?.message || error || "Failed to add loan",
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {

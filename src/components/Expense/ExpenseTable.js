@@ -22,6 +22,7 @@ import {
   Pagination,
   Alert,
 } from "@mui/material";
+import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditExpenseModal from "./EditExpenseModal";
@@ -143,6 +144,18 @@ export default function ExpenseTable() {
     const month = MONTHS.find((m) => m.value === monthValue);
     return month ? month.label : "";
   };
+
+  if (loading) {
+    return (
+      <StatsTableSkeleton
+        showStats={false}
+        showTable
+        tableColumns={6}
+        rows={5}
+      />
+    );
+  }
+
   return (
     <>
       <Card

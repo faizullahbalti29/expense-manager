@@ -29,9 +29,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import Dashboard from "./dashboard/page";
+// import Dashboard from "./dashboard/page";
 import React from "react";
-import LoanDashboard from "@/components/Loan/LoanDashboard";
+const LoanDashboard = React.lazy(
+  () => import("@/components/Loan/LoanDashboard"),
+);
+const Dashboard = React.lazy(() => import("../components/Expense/Dashboard"));
 export default function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -276,8 +279,23 @@ export default function Home() {
           <Tab label="Loan" />
         </Tabs>
       </Container>
-      {value === 0 && <Dashboard />}
-      {value === 1 && <LoanDashboard />}
+      <React.Suspense
+        fallback={
+          <Box
+            sx={{
+              minHeight: "60vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        }
+      >
+        {value === 0 && <Dashboard />}
+        {value === 1 && <LoanDashboard />}
+      </React.Suspense>
     </>
   );
 }

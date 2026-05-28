@@ -3,15 +3,10 @@
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import { fetchLoanStats } from "../../store/loansSlice";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -46,11 +41,7 @@ export default function LoanStats() {
   }, [dispatch, handleUnauthorized]);
 
   if (statsLoading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <StatsTableSkeleton showStats statsCount={4} showTable={false} />;
   }
 
   return (

@@ -75,11 +75,26 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
+    if (!body.amount) {
+      return NextResponse.json(
+        { error: "Amount is required" },
+        { status: 400 },
+      );
+    }
     if (body.amount <= 0) {
       return NextResponse.json(
         { error: "Amount must be greater than zero" },
         { status: 400 },
       );
+    }
+    if (!body.beneficiary) {
+      return NextResponse.json(
+        { error: "Beneficiary is required" },
+        { status: 400 },
+      );
+    }
+    if (!body.type) {
+      return NextResponse.json({ error: "Type is required" }, { status: 400 });
     }
 
     const loan = await Loan.create({

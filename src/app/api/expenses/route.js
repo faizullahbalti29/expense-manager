@@ -79,6 +79,15 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
+    if (!body.name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    }
+    if (!body.amount) {
+      return NextResponse.json(
+        { error: "Amount is required" },
+        { status: 400 },
+      );
+    }
     if (body.amount <= 0) {
       return NextResponse.json(
         { error: "Amount must be greater than zero" },
