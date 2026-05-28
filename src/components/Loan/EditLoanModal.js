@@ -24,7 +24,7 @@ const modalStyle = {
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  p: 4,
+  p: "24px",
   borderRadius: 2,
 };
 
@@ -124,7 +124,7 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
           variant="h6"
           component="h2"
           mb={2}
-          fontWeight="bold"
+          // fontWeight="bold"
         >
           Edit Loan
         </Typography>
@@ -193,12 +193,19 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
           >
-            <Button onClick={handleClose} color="inherit" disabled={updating}>
+            <Button
+              onClick={handleClose}
+              size="medium"
+              variant="outlined"
+              color="error"
+              disabled={updating}
+            >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="contained"
+              size="medium"
               color="primary"
               disabled={updating}
             >

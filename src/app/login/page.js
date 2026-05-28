@@ -152,7 +152,8 @@ export default function LoginPage() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, py: 1.5, fontSize: "1rem" }}
+                sx={{ mt: 3 }}
+                size="large"
                 disabled={loading}
                 startIcon={
                   loading ? (

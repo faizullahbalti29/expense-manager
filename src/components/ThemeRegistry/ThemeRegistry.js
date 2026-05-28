@@ -39,20 +39,28 @@ const theme = createTheme({
           borderRadius: "8px",
           fontSize: "14px",
         },
+        sizeLarge: {
+          minHeight: "53px",
+        },
       },
     },
     MuiTextField: {
       styleOverrides: {
+        input: {
+          "&.MuiInputBase-inputSizeMedium": {
+            padding: "12px 14px",
+          },
+        },
         root: {
           "& .MuiOutlinedInput-root": {
             borderRadius: "8px",
-            fontSize:"14px"
+            fontSize: "14px",
           },
           "& .MuiInputLabel-root": {
-            fontSize: "14px"
+            fontSize: "14px",
           },
           "& .MuiOutlinedInput-input::placeholder": {
-            fontSize: "14px"
+            fontSize: "14px",
           },
         },
       },

@@ -26,7 +26,7 @@ const modalStyle = {
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  p: 4,
+  p: "24px",
   borderRadius: 2,
 };
 
@@ -125,7 +125,7 @@ export default function EditExpenseModal({
           variant="h6"
           component="h2"
           mb={2}
-          fontWeight="bold"
+          // fontWeight="bold"
         >
           Edit Expense
         </Typography>
@@ -176,12 +176,19 @@ export default function EditExpenseModal({
           <Box
             sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 2 }}
           >
-            <Button onClick={handleClose} color="inherit">
+            <Button
+              onClick={handleClose}
+              color="error"
+              disabled={updatingExpense}
+              size="medium"
+              variant="outlined"
+            >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="contained"
+              size="medium"
               color="primary"
               disabled={updatingExpense}
             >

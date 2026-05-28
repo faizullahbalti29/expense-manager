@@ -158,7 +158,7 @@ export default function ExpenseForm() {
               gridTemplateColumns: {
                 xs: "1fr",
                 sm: "1fr 1fr",
-                md: "1fr 1fr 1fr 1fr 1fr",
+                md: "1fr 1fr 1fr 1fr",
               },
             }}
           >
@@ -192,7 +192,7 @@ export default function ExpenseForm() {
               </TextField>
             </Box>
             {isCustomName && (
-              <Box sx={{ flex: 1, mt: 2 }}>
+              <Box>
                 <TextField
                   fullWidth
                   label="Expense Name"
@@ -247,7 +247,7 @@ export default function ExpenseForm() {
                 )
               }
               disabled={!name || !amount || loading}
-              sx={{ px: 4, flex: 1 }}
+              // sx={{ px: 4, flex: 1 }}
             >
               {loading ? "Saving..." : "Add Expense"}
             </Button>

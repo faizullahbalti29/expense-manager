@@ -213,9 +213,10 @@ export default function LoanForm() {
               type="submit"
               variant="contained"
               color="primary"
+              size="large"
               disabled={loading || !beneficiary || !amount}
               startIcon={<AddIcon />}
-              sx={{ px: 4, flex: 1 }}
+              // sx={{ px: 4, flex: 1 }}
             >
               {loading ? "Saving..." : "Save Loan"}
             </Button>

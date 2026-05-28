@@ -200,9 +200,17 @@ export default function ExpenseTable() {
                 dispatch(setExpenseMonthFilter(e.target.value));
                 dispatch(setExpensePage(1));
               }}
+              size="small"
               SelectProps={{
                 MenuProps: {
-                  PaperProps: { style: { maxHeight: 250 } },
+                  PaperProps: {
+                    sx: {
+                      "& .MuiMenuItem-root": {
+                        fontSize: "14px",
+                      },
+                      maxHeight: 250,
+                    },
+                  },
                   disableScrollLock: true,
                 },
               }}
@@ -349,9 +357,17 @@ export default function ExpenseTable() {
                 dispatch(setExpenseLimit(parseInt(e.target.value)));
                 dispatch(setExpensePage(1));
               }}
+              size="small"
               SelectProps={{
                 MenuProps: {
-                  PaperProps: { style: { maxHeight: 250 } },
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 250,
+                      "& .MuiMenuItem-root": {
+                        fontSize: "14px",
+                      },
+                    },
+                  },
                   disableScrollLock: true,
                 },
               }}

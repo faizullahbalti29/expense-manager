@@ -301,11 +301,21 @@ export default function LoanTable() {
                   flex: { xs: "", sm: 1 },
                   width: { xs: "100%", sm: "auto" },
                   mb: { xs: 1, sm: 0 },
+                  "& .MuiSelect-select": {
+                    padding: "12px 14px",
+                    fontSize: "14px",
+                  },
                 }}
                 label="Filter by Type"
               >
                 {LOAN_TYPES.map((type) => (
-                  <MenuItem key={type.value} value={type.value}>
+                  <MenuItem
+                    key={type.value}
+                    value={type.value}
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
                     {type.label}
                   </MenuItem>
                 ))}
@@ -326,11 +336,20 @@ export default function LoanTable() {
                 sx={{
                   flex: { xs: "", sm: 1 },
                   width: { xs: "100%", sm: "auto" },
+                  "& .MuiSelect-select": {
+                    padding: "12px 14px",
+                  },
                 }}
                 label="Filter by Status"
               >
                 {LOAN_STATUSES.map((status) => (
-                  <MenuItem key={status.value} value={status.value}>
+                  <MenuItem
+                    key={status.value}
+                    value={status.value}
+                    sx={{
+                      fontSize: "14px",
+                    }}
+                  >
                     {status.label}
                   </MenuItem>
                 ))}
@@ -549,20 +568,36 @@ export default function LoanTable() {
                 dispatch(setLoanLimit(parseInt(e.target.value)));
                 dispatch(setLoanPage(1));
               }}
+              size="small"
               SelectProps={{
                 MenuProps: {
                   PaperProps: { style: { maxHeight: 250 } },
                   disableScrollLock: true,
                 },
               }}
-              sx={{ width: { xs: "100%", sm: 160 } }}
+              sx={{
+                width: { xs: "100%", sm: 160 },
+                "& .MuiSelect-select": {
+                  padding: "12px 14px",
+                },
+              }}
               label="Rows per Page"
             >
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
+              <MenuItem value={5} sx={{ fontSize: "14px" }}>
+                5
+              </MenuItem>
+              <MenuItem value={10} sx={{ fontSize: "14px" }}>
+                10
+              </MenuItem>
+              <MenuItem value={25} sx={{ fontSize: "14px" }}>
+                25
+              </MenuItem>
+              <MenuItem value={50} sx={{ fontSize: "14px" }}>
+                50
+              </MenuItem>
+              <MenuItem value={100} sx={{ fontSize: "14px" }}>
+                100
+              </MenuItem>
             </TextField>
             <Pagination
               count={pagination.totalPages}
