@@ -34,6 +34,7 @@ import {
   setExpenseMonthFilter,
   setExpensePage,
   setExpenseLimit,
+  totalMonthlyFilteredExpenses,
 } from "../../store/expensesSlice";
 
 const MONTHS = [
@@ -61,6 +62,7 @@ export default function ExpenseTable() {
     filters,
     loading,
     error,
+    filteredMonthlyTotal,
   } = useSelector((state) => state.expenses);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
@@ -86,12 +88,14 @@ export default function ExpenseTable() {
         limit: pagination.limit,
       }),
     );
+    if (filters.month !== "all") {
+      dispatch(totalMonthlyFilteredExpenses(filters.month));
+    }
   }, [dispatch, filters.month, pagination.currentPage, pagination.limit]);
   const handleEditClick = (expense) => {
     setSelectedExpense(expense);
     setEditModalOpen(true);
   };
-
   const openDeleteConfirm = (expense) => {
     setExpenseToDelete(expense);
     setConfirmOpen(true);
@@ -144,7 +148,6 @@ export default function ExpenseTable() {
     const month = MONTHS.find((m) => m.value === monthValue);
     return month ? month.label : "";
   };
-
   if (loading) {
     return (
       <StatsTableSkeleton
@@ -336,6 +339,45 @@ export default function ExpenseTable() {
                     </TableCell>
                   </TableRow>
                 )}
+                {filters.month !== "all" && (
+                  <TableCell
+                    colSpan={6}
+                    sx={{
+                      color: "text.secondary",
+                      position: "sticky",
+                      bottom: 0,
+                      background: "rgba(30,30,35,1)",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          color: "primary.main",
+                          fontsize: "16px",
+                        }}
+                      >
+                        Expense in {getMonthLabel(filters.month)} - Total:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: "bold",
+                          color: "primary.main",
+                          fontsize: "16px",
+                          marginLeft: "auto",
+                        }}
+                      >
+                        Rs. {filteredMonthlyTotal.monthlyTotal.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -350,36 +392,44 @@ export default function ExpenseTable() {
               mt: 3,
             }}
           >
-            <TextField
-              value={pagination.limit}
-              select
-              onChange={(e) => {
-                dispatch(setExpenseLimit(parseInt(e.target.value)));
-                dispatch(setExpensePage(1));
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
               }}
-              size="small"
-              SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    sx: {
-                      maxHeight: 250,
-                      "& .MuiMenuItem-root": {
-                        fontSize: "14px",
+            >
+              <TextField
+                value={pagination.limit}
+                select
+                onChange={(e) => {
+                  dispatch(setExpenseLimit(parseInt(e.target.value)));
+                  dispatch(setExpensePage(1));
+                }}
+                size="small"
+                SelectProps={{
+                  MenuProps: {
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 250,
+                        "& .MuiMenuItem-root": {
+                          fontSize: "14px",
+                        },
                       },
                     },
+                    disableScrollLock: true,
                   },
-                  disableScrollLock: true,
-                },
-              }}
-              sx={{ width: { xs: "100%", sm: 160 } }}
-              label="Rows per Page"
-            >
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </TextField>
+                }}
+                sx={{ width: { xs: "100%", sm: 160 } }}
+                label="Rows per Page"
+              >
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={25}>25</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </TextField>
+            </Box>
             <Pagination
               count={pagination.totalPages}
               page={pagination.currentPage}

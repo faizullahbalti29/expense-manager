@@ -84,7 +84,6 @@ export default function LoanTable() {
       !pagination.currentPage ||
       !pagination.limit
     ) {
-      console.log("Returned");
       return;
     }
     dispatch(

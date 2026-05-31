@@ -100,6 +100,28 @@ export const fetchExpenseStats = createAsyncThunk(
     }
   },
 );
+export const totalMonthlyFilteredExpenses = createAsyncThunk(
+  "expenses/totalMonthlyFilteredExpenses",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const currentMonth = payload;
+      const currentRes = await Promise.all([
+        fetch(`/api/expenses/stats?month=${currentMonth}`),
+      ]);
+      const parsedRes = await Promise.all(
+        currentRes.map((res) => parseResponse(res)),
+      );
+      const currentData = parsedRes[0];
+      return {
+        monthlyTotal: currentData.monthlyTotal || 0,
+        yearlyTotal: currentData.yearlyTotal || 0,
+        // previousMonthTotal: previousData.monthlyTotal || 0,
+      };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 
 const initialState = {
   items: [],
@@ -115,6 +137,13 @@ const initialState = {
   loading: false,
   error: null,
   stats: {
+    monthlyTotal: 0,
+    yearlyTotal: 0,
+    previousMonthTotal: 0,
+    loading: false,
+    error: null,
+  },
+  filteredMonthlyTotal: {
     monthlyTotal: 0,
     yearlyTotal: 0,
     previousMonthTotal: 0,
@@ -197,6 +226,20 @@ const expensesSlice = createSlice({
       .addCase(fetchExpenseStats.rejected, (state, action) => {
         state.stats.loading = false;
         state.stats.error = action.payload || action.error.message;
+      })
+      .addCase(totalMonthlyFilteredExpenses.pending, (state) => {
+        state.filteredMonthlyTotal.loading = true;
+        state.filteredMonthlyTotal.error = null;
+      })
+      .addCase(totalMonthlyFilteredExpenses.fulfilled, (state, action) => {
+        state.filteredMonthlyTotal.loading = false;
+        state.filteredMonthlyTotal.monthlyTotal = action.payload.monthlyTotal;
+        state.filteredMonthlyTotal.yearlyTotal = action.payload.yearlyTotal;
+      })
+      .addCase(totalMonthlyFilteredExpenses.rejected, (state, action) => {
+        state.filteredMonthlyTotal.loading = false;
+        state.filteredMonthlyTotal.error =
+          action.payload || action.error.message;
       });
   },
 });
