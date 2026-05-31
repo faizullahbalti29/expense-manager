@@ -392,44 +392,37 @@ export default function ExpenseTable() {
               mt: 3,
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                gap: 2,
-                alignItems: "center",
+            <TextField
+              value={pagination.limit}
+              select
+              onChange={(e) => {
+                dispatch(setExpenseLimit(parseInt(e.target.value)));
+                dispatch(setExpensePage(1));
               }}
-            >
-              <TextField
-                value={pagination.limit}
-                select
-                onChange={(e) => {
-                  dispatch(setExpenseLimit(parseInt(e.target.value)));
-                  dispatch(setExpensePage(1));
-                }}
-                size="small"
-                SelectProps={{
-                  MenuProps: {
-                    PaperProps: {
-                      sx: {
-                        maxHeight: 250,
-                        "& .MuiMenuItem-root": {
-                          fontSize: "14px",
-                        },
+              size="small"
+              SelectProps={{
+                MenuProps: {
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 250,
+                      "& .MuiMenuItem-root": {
+                        fontSize: "14px",
                       },
                     },
-                    disableScrollLock: true,
                   },
-                }}
-                sx={{ width: { xs: "100%", sm: 160 } }}
-                label="Rows per Page"
-              >
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={25}>25</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-              </TextField>
-            </Box>
+                  disableScrollLock: true,
+                },
+              }}
+              sx={{ width: { xs: "100%", sm: 160 } }}
+              label="Rows per Page"
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </TextField>
+
             <Pagination
               count={pagination.totalPages}
               page={pagination.currentPage}
