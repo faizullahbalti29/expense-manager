@@ -93,6 +93,7 @@ export const fetchExpenseStats = createAsyncThunk(
       return {
         monthlyTotal: currentData.monthlyTotal || 0,
         yearlyTotal: currentData.yearlyTotal || 0,
+        prevMonthTotal: currentData.prevMonthTotal || 0,
         previousMonthTotal: previousData.monthlyTotal || 0,
       };
     } catch (error) {
@@ -139,6 +140,7 @@ const initialState = {
   stats: {
     monthlyTotal: 0,
     yearlyTotal: 0,
+    prevMonthTotal: 0,
     previousMonthTotal: 0,
     loading: false,
     error: null,

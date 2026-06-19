@@ -43,9 +43,23 @@ export async function GET(req) {
     const year = now.getFullYear();
     const userId = new mongoose.Types.ObjectId(user.userId);
 
-    // Monthly expense sum
     const monthStartDate = new Date(year, monthNum, 1);
     const monthEndDate = new Date(year, monthNum + 1, 0, 23, 59, 59, 999);
+
+    const previousMonthStartDate = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      1
+    );
+
+    // Previous month same day as today
+    const previousMonthTodayDate = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    console.log({ previousMonthStartDate, previousMonthTodayDate })
 
     const monthTotal = await Expense.aggregate([
       {
@@ -61,6 +75,21 @@ export async function GET(req) {
         },
       },
     ]);
+    const prevMonthTotal = await Expense.aggregate([
+      {
+        $match: {
+          user: userId,
+          date: { $gte: previousMonthStartDate, $lte: previousMonthTodayDate },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+
 
     // Yearly expense sum (all expenses for the user)
     const yearlyTotal = await Expense.aggregate([
@@ -81,6 +110,7 @@ export async function GET(req) {
     return NextResponse.json({
       monthlyTotal: monthTotal[0]?.total || 0,
       yearlyTotal: yearlyTotal[0]?.total || 0,
+      prevMonthTotal: prevMonthTotal[0]?.total || 0,
     });
   } catch (error) {
     console.error("Error fetching stats:", error);

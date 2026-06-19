@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import DateRangeIcon from "@mui/icons-material/DateRange";
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import { fetchExpenseStats } from "../../store/expensesSlice";
@@ -41,14 +42,23 @@ export default function ExpenseStats() {
   }, [dispatch, handleUnauthorized]);
 
   if (statsLoading) {
-    return <StatsTableSkeleton showStats statsCount={3} showTable={false} />;
+    return <StatsTableSkeleton showStats statsCount={4} showTable={false} />;
   }
+
+  const today = new Date();
+  const dayOfMonth = today.getDate();
+  const currentMonthName = today.toLocaleDateString("en-US", { month: "long" });
+  const prevMonthName = new Date(
+    today.getFullYear(),
+    today.getMonth() - 1,
+    1
+  ).toLocaleDateString("en-US", { month: "long" });
 
   return (
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr" },
+        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
         gap: 2,
         mb: 4,
       }}
@@ -89,7 +99,90 @@ export default function ExpenseStats() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                Rs. {stats?.yearlyTotal.toFixed(2)}
+                Rs. {stats?.yearlyTotal?.toFixed(2) ?? "0.00"}
+              </Typography>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Month-to-Date Comparison Card */}
+      <Card
+        sx={{
+          background: "rgba(30,30,35,0.6)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            height: "100%",
+            boxSizing: "border-box",
+            "&:last-child": { pb: 2 },
+          }}
+        >
+          {/* Header */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: "8px" }}>
+            <CompareArrowsIcon
+              sx={{ fontSize: "1.25rem", color: "primary.main" }}
+            />
+            <Typography color="textSecondary" sx={{ fontSize: "0.875rem" }}>
+              Month-to-Date Comparison
+            </Typography>
+          </Box>
+
+          {/* Single row: prev month | vertical divider | current month */}
+          <Box sx={{ display: "flex", alignItems: "stretch", gap: 0 }}>
+            {/* Previous month */}
+            <Box sx={{ flex: 1, textAlign: "center", }}>
+              <Typography
+                sx={{ fontSize: "0.75rem", color: "text.secondary", mb: 0.5 }}
+              >
+                Upto {dayOfMonth} {prevMonthName}
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "0.95rem",
+                  background: "linear-gradient(to right, #f97316, #fb923c)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Rs. {stats?.prevMonthTotal?.toFixed(2) ?? "0.00"}
+              </Typography>
+            </Box>
+
+            {/* Vertical divider */}
+            <Box
+              sx={{
+                width: "1px",
+                background: "rgba(255,255,255,0.10)",
+                mx: 1.5,
+                alignSelf: "stretch",
+              }}
+            />
+
+            {/* Current month */}
+            <Box sx={{ flex: 1, textAlign: "center" }}>
+              <Typography
+                sx={{ fontSize: "0.75rem", color: "text.secondary", mb: 0.5 }}
+              >
+                Upto {dayOfMonth} {currentMonthName}
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "0.95rem",
+                  background: "linear-gradient(to right, #c084fc, #6366f1)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Rs. {stats?.monthlyTotal?.toFixed(2) ?? "0.00"}
               </Typography>
             </Box>
           </Box>
@@ -132,7 +225,7 @@ export default function ExpenseStats() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                Rs. {stats?.previousMonthTotal.toFixed(2)}
+                Rs. {stats?.previousMonthTotal?.toFixed(2) ?? "0.00"}
               </Typography>
             </Box>
           </Box>
@@ -175,7 +268,7 @@ export default function ExpenseStats() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                Rs. {stats?.monthlyTotal.toFixed(2)}
+                Rs. {stats?.monthlyTotal?.toFixed(2) ?? "0.00"}
               </Typography>
             </Box>
           </Box>
