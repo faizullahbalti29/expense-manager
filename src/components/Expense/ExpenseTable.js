@@ -122,6 +122,7 @@ export default function ExpenseTable() {
         }),
       );
       dispatch(fetchExpenseStats());
+      dispatch(totalMonthlyFilteredExpenses(filters.month))
       setConfirmOpen(false);
       setExpenseToDelete(null);
     } catch (error) {

@@ -15,6 +15,7 @@ import {
   updateExpense,
   fetchExpenses,
   fetchExpenseStats,
+  totalMonthlyFilteredExpenses,
 } from "../../store/expensesSlice";
 
 const modalStyle = {
@@ -82,6 +83,7 @@ export default function EditExpenseModal({
         }),
       );
       dispatch(fetchExpenseStats());
+      dispatch(totalMonthlyFilteredExpenses(filters.month))
       // window.scrollTo({ top: 0, behavior: "smooth" });
       handleClose();
     } catch (error) {
@@ -125,7 +127,7 @@ export default function EditExpenseModal({
           variant="h6"
           component="h2"
           mb={2}
-          // fontWeight="bold"
+        // fontWeight="bold"
         >
           Edit Expense
         </Typography>

@@ -22,6 +22,7 @@ import {
   addExpense,
   fetchExpenses,
   fetchExpenseStats,
+  totalMonthlyFilteredExpenses,
 } from "../../store/expensesSlice";
 const EXPENSE_CATEGORIES = [
   { label: "Hostel Fees", value: "Hostel Fees" },
@@ -71,6 +72,7 @@ export default function ExpenseForm() {
         }),
       );
       dispatch(fetchExpenseStats());
+      dispatch(totalMonthlyFilteredExpenses(filters.month));
       // window.scrollTo({ top: 0, behavior: "smooth" });
       return result;
     } catch (error) {
@@ -247,7 +249,7 @@ export default function ExpenseForm() {
                 )
               }
               disabled={!name || !amount || loading}
-              // sx={{ px: 4, flex: 1 }}
+            // sx={{ px: 4, flex: 1 }}
             >
               {loading ? "Saving..." : "Add Expense"}
             </Button>
