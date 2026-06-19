@@ -341,43 +341,45 @@ export default function ExpenseTable() {
                   </TableRow>
                 )}
                 {filters.month !== "all" && (
-                  <TableCell
-                    colSpan={6}
-                    sx={{
-                      color: "text.secondary",
-                      position: "sticky",
-                      bottom: 0,
-                      background: "rgba(30,30,35,1)",
-                    }}
-                  >
-                    <Box
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
                       sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        color: "text.secondary",
+                        position: "sticky",
+                        bottom: 0,
+                        background: "rgba(30,30,35,1)",
                       }}
                     >
-                      <Typography
+                      <Box
                         sx={{
-                          fontWeight: "bold",
-                          color: "primary.main",
-                          fontsize: "16px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        Expense in {getMonthLabel(filters.month)} - Total:
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontWeight: "bold",
-                          color: "primary.main",
-                          fontsize: "16px",
-                          marginLeft: "auto",
-                        }}
-                      >
-                        Rs. {filteredMonthlyTotal.monthlyTotal.toFixed(2)}
-                      </Typography>
-                    </Box>
-                  </TableCell>
+                        <Typography
+                          sx={{
+                            fontWeight: "bold",
+                            color: "primary.main",
+                            fontsize: "16px",
+                          }}
+                        >
+                          Expense in {getMonthLabel(filters.month)} - Total:
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontWeight: "bold",
+                            color: "primary.main",
+                            fontsize: "16px",
+                            marginLeft: "auto",
+                          }}
+                        >
+                          Rs. {filteredMonthlyTotal.monthlyTotal.toFixed(2)}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
