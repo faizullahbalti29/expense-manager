@@ -14,8 +14,8 @@ import {
   Grid,
   CircularProgress,
   Container,
-  Alert,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import AddCircleIcon from "@mui/icons-material/AddCircle"; // Assuming icons-material is installed
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -46,7 +46,7 @@ export default function ExpenseForm() {
   const [expenseDate, setExpenseDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const { enqueueSnackbar } = useSnackbar();
   const handleUnauthorized = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("isAuthenticated");
@@ -59,11 +59,7 @@ export default function ExpenseForm() {
     setLoading(true);
     try {
       const result = await dispatch(addExpense(expenseData)).unwrap();
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Expense added successfully!",
-      });
+      enqueueSnackbar("Expense added successfully!", { variant: "success" });
       dispatch(
         fetchExpenses({
           month: filters.month,
@@ -76,15 +72,12 @@ export default function ExpenseForm() {
       // window.scrollTo({ top: 0, behavior: "smooth" });
       return result;
     } catch (error) {
-      if (error?.message === "Unauthorized") {
+      if (error === "Unauthorized") {
         handleUnauthorized();
         return;
       }
-      setAlert({
-        open: true,
-        type: "error",
-        message: error?.message || "Failed to add expense",
-      });
+      console.log(error)
+      enqueueSnackbar(error || "Failed to add expense", { variant: "error" });
       // window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);
@@ -140,17 +133,6 @@ export default function ExpenseForm() {
         >
           Add New Expense
         </Typography>
-        {alert.open && (
-          // <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
-          <Alert
-            severity={alert.type}
-            sx={{ mb: 2, borderRadius: 2 }}
-            onClose={() => setAlert({ open: false, message: "", type: "" })}
-            open={alert.open}
-          >
-            {alert.message}
-          </Alert>
-        )}
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Box
             sx={{

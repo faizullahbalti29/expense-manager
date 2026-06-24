@@ -11,8 +11,8 @@ import {
   TextField,
   MenuItem,
   Button,
-  Alert,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import AddIcon from "@mui/icons-material/Add";
 import { addLoan, fetchLoans, fetchLoanStats } from "../../store/loansSlice";
 import LoanTable, { LOAN_TYPES } from "./LoanTable";
@@ -25,7 +25,7 @@ export default function LoanForm() {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const { enqueueSnackbar } = useSnackbar();
   const [description, setDescription] = useState("");
   const [loanDate, setLoanDate] = useState("");
 
@@ -56,11 +56,7 @@ export default function LoanForm() {
         }),
       ).unwrap();
 
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Loan added successfully!",
-      });
+      enqueueSnackbar("Loan added successfully!", { variant: "success" });
 
       dispatch(
         fetchLoans({
@@ -83,11 +79,7 @@ export default function LoanForm() {
         handleUnauthorized();
         return;
       }
-      setAlert({
-        open: true,
-        type: "error",
-        message: error?.message || error || "Failed to add loan",
-      });
+      enqueueSnackbar(error?.message || error || "Failed to add loan", { variant: "error" });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);
@@ -114,15 +106,6 @@ export default function LoanForm() {
         >
           Add New Loan
         </Typography>
-        {alert.open && (
-          <Alert
-            severity={alert.type}
-            sx={{ mb: 2, borderRadius: 2 }}
-            onClose={() => setAlert({ open: false, message: "", type: "" })}
-          >
-            {alert.message}
-          </Alert>
-        )}
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Box
             sx={{

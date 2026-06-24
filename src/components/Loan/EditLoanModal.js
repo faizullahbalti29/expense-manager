@@ -10,8 +10,8 @@ import {
   TextField,
   Button,
   MenuItem,
-  Alert,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { updateLoan, fetchLoans, fetchLoanStats } from "../../store/loansSlice";
 import { LOAN_TYPES } from "./LoanTable";
 
@@ -28,7 +28,7 @@ const modalStyle = {
   borderRadius: 2,
 };
 
-export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
+export default function EditLoanModal({ open, handleClose, loan }) {
   const router = useRouter();
   const dispatch = useDispatch();
   const { pagination, filters } = useSelector((state) => state.loans);
@@ -37,8 +37,8 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
   const [type, setType] = useState("given");
   const [date, setDate] = useState("");
   const [updating, setUpdating] = useState(false);
-  const [error, setError] = useState("");
   const [description, setDescription] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (!open || !loan) return;
@@ -50,7 +50,6 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
       const d = new Date(loan.date);
       const isoDate = d.toISOString().split("T")[0];
       setDate(isoDate);
-      setError("");
     }
   }, [loan]);
 
@@ -65,7 +64,6 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdating(true);
-    setError("");
 
     try {
       await dispatch(
@@ -79,11 +77,7 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
         }),
       ).unwrap();
 
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Loan updated successfully!",
-      });
+      enqueueSnackbar("Loan updated successfully!", { variant: "success" });
       dispatch(
         fetchLoans({
           type: filters.type,
@@ -100,12 +94,7 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
         handleUnauthorized();
         return;
       }
-      setError(err?.message || "Failed to update loan");
-      setAlert({
-        open: true,
-        type: "error",
-        message: err?.message || "Failed to update loan",
-      });
+      enqueueSnackbar(err?.message || "Failed to update loan", { variant: "error" });
     } finally {
       setUpdating(false);
     }
@@ -128,11 +117,6 @@ export default function EditLoanModal({ open, handleClose, loan, setAlert }) {
         >
           Edit Loan
         </Typography>
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
         <Box
           component="form"
           onSubmit={handleSubmit}

@@ -20,8 +20,8 @@ import {
   IconButton,
   Tooltip,
   Pagination,
-  Alert,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -68,7 +68,7 @@ export default function ExpenseTable() {
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState(null);
-  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const { enqueueSnackbar } = useSnackbar();
   const [deletingExpense, setDeletingExpense] = useState(false);
   const [updatingExpense, setUpdatingExpense] = useState(false);
 
@@ -109,11 +109,7 @@ export default function ExpenseTable() {
       await dispatch(
         deleteExpense(expenseToDelete._id || expenseToDelete.id),
       ).unwrap();
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Expense deleted successfully!",
-      });
+      enqueueSnackbar("Expense deleted successfully!", { variant: "success" });
       dispatch(
         fetchExpenses({
           month: filters.month,
@@ -130,11 +126,7 @@ export default function ExpenseTable() {
         handleUnauthorized();
         return;
       }
-      setAlert({
-        open: true,
-        type: "error",
-        message: error?.message || "Failed to delete expense",
-      });
+      enqueueSnackbar(error?.message || "Failed to delete expense", { variant: "error" });
     } finally {
       setDeletingExpense(false);
     }
@@ -171,15 +163,6 @@ export default function ExpenseTable() {
         }}
       >
         <CardContent>
-          {alert.open && (
-            <Alert
-              severity={alert.type}
-              sx={{ mb: 1, borderRadius: 2 }}
-              onClose={() => setAlert({ open: false, type: "", message: "" })}
-            >
-              {alert.message}
-            </Alert>
-          )}
           <Box
             sx={{
               display: "flex",
@@ -444,7 +427,6 @@ export default function ExpenseTable() {
         open={editModalOpen}
         handleClose={() => setEditModalOpen(false)}
         expense={selectedExpense}
-        setAlert={setAlert}
       />
       <ConfirmDialog
         open={confirmOpen}

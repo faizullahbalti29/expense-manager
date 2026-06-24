@@ -20,8 +20,8 @@ import {
   IconButton,
   Tooltip,
   Pagination,
-  Alert,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import StatsTableSkeleton from "../UI/StatsTableSkeleton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -64,7 +64,7 @@ export default function LoanTable() {
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loanToDelete, setLoanToDelete] = useState(null);
-  const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const { enqueueSnackbar } = useSnackbar();
   const [deletingLoan, setDeletingLoan] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(null);
   const [loanToUpdate, setLoanToUpdate] = useState(null);
@@ -122,11 +122,7 @@ export default function LoanTable() {
     setDeletingLoan(true);
     try {
       await dispatch(deleteLoan(loanToDelete._id)).unwrap();
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Loan deleted successfully!",
-      });
+      enqueueSnackbar("Loan deleted successfully!", { variant: "success" });
       dispatch(
         fetchLoans({
           type: filters.type,
@@ -143,11 +139,7 @@ export default function LoanTable() {
         handleUnauthorized();
         return;
       }
-      setAlert({
-        open: true,
-        type: "error",
-        message: error?.message || "Failed to delete loan",
-      });
+      enqueueSnackbar(error?.message || "Failed to delete loan", { variant: "error" });
     } finally {
       setDeletingLoan(false);
     }
@@ -170,11 +162,7 @@ export default function LoanTable() {
         }),
       ).unwrap();
 
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Loan Marked as Returned!",
-      });
+      enqueueSnackbar("Loan Marked as Returned!", { variant: "success" });
       dispatch(
         fetchLoans({
           type: filters.type,
@@ -194,11 +182,7 @@ export default function LoanTable() {
         return;
       }
       // setError(err?.message || "Failed to update loan");
-      setAlert({
-        open: true,
-        type: "error",
-        message: err?.message || "Failed to update loan",
-      });
+      enqueueSnackbar(err?.message || "Failed to update loan", { variant: "error" });
     } finally {
       setUpdatingStatus(false);
     }
@@ -245,15 +229,6 @@ export default function LoanTable() {
         }}
       >
         <CardContent>
-          {alert.open && (
-            <Alert
-              severity={alert.type}
-              sx={{ mb: 1, borderRadius: 2 }}
-              onClose={() => setAlert({ open: false, type: "", message: "" })}
-            >
-              {alert.message}
-            </Alert>
-          )}
           <Box
             sx={{
               display: "flex",
@@ -617,7 +592,6 @@ export default function LoanTable() {
         open={editModalOpen}
         handleClose={() => setEditModalOpen(false)}
         loan={selectedLoan}
-        setAlert={setAlert}
       />
 
       <ConfirmDialog

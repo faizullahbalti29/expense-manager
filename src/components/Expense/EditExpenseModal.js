@@ -9,8 +9,8 @@ import {
   Typography,
   TextField,
   Button,
-  Alert,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import {
   updateExpense,
   fetchExpenses,
@@ -35,7 +35,6 @@ export default function EditExpenseModal({
   open,
   handleClose,
   expense,
-  setAlert,
 }) {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -45,7 +44,7 @@ export default function EditExpenseModal({
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [updatingExpense, setUpdatingExpense] = useState(false);
-  // const [alert, setAlert] = useState({ open: false, type: "", message: "" });
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (expense) {
@@ -70,11 +69,7 @@ export default function EditExpenseModal({
     setUpdatingExpense(true);
     try {
       await dispatch(updateExpense(updatedExpense)).unwrap();
-      setAlert({
-        open: true,
-        type: "success",
-        message: "Expense updated successfully!",
-      });
+      enqueueSnackbar("Expense updated successfully!", { variant: "success" });
       dispatch(
         fetchExpenses({
           month: filters.month,
@@ -91,11 +86,7 @@ export default function EditExpenseModal({
         handleUnauthorized();
         return;
       }
-      setAlert({
-        open: true,
-        type: "error",
-        message: error?.message || "Failed to update expense",
-      });
+      enqueueSnackbar(error?.message || "Failed to update expense", { variant: "error" });
       // window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setUpdatingExpense(false);
@@ -131,15 +122,6 @@ export default function EditExpenseModal({
         >
           Edit Expense
         </Typography>
-        {/* {alert.open && (
-          <Alert
-            severity={alert.type}
-            sx={{ mb: 2, borderRadius: 2 }}
-            onClose={() => setAlert({ open: false, type: "", message: "" })}
-          >
-            {alert.message}
-          </Alert>
-        )} */}
         <Box
           component="form"
           onSubmit={handleSubmit}
