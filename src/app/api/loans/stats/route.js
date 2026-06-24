@@ -96,7 +96,6 @@ export async function GET(req) {
       },
     ]);
 
-    console.log(stats);
     return NextResponse.json({
       loanGiven: stats[0]?.receivable || 0,
       loanTaken: stats[0]?.payable || 0,
@@ -104,7 +103,6 @@ export async function GET(req) {
       loanTakenReturned: stats[0]?.payableReturned || 0,
     });
   } catch (error) {
-    console.log("Error fetching loan stats:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -94,12 +94,10 @@ export async function POST(req) {
         { status: 400 },
       );
     }
-    // console.log("expense from backend", body);
     const expense = await Expense.create({
       ...body,
       user: user.userId,
     });
-    // console.log("Created expense:", expense);
     return NextResponse.json(expense, { status: 201 });
   } catch (error) {
     console.error("Error creating expense from the post method:", error);

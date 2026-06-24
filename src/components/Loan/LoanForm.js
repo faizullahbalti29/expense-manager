@@ -83,7 +83,6 @@ export default function LoanForm() {
         handleUnauthorized();
         return;
       }
-      console.log(error);
       setAlert({
         open: true,
         type: "error",
@@ -216,7 +215,7 @@ export default function LoanForm() {
               size="large"
               disabled={loading || !beneficiary || !amount}
               startIcon={<AddIcon />}
-              // sx={{ px: 4, flex: 1 }}
+            // sx={{ px: 4, flex: 1 }}
             >
               {loading ? "Saving..." : "Save Loan"}
             </Button>

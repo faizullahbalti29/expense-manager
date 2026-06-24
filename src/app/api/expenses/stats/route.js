@@ -59,8 +59,6 @@ export async function GET(req) {
       now.getDate()
     );
 
-    console.log({ previousMonthStartDate, previousMonthTodayDate })
-
     const monthTotal = await Expense.aggregate([
       {
         $match: {
@@ -105,7 +103,6 @@ export async function GET(req) {
         },
       },
     ]);
-    // console.log(yearlyTotal, "Yearly Total");
 
     return NextResponse.json({
       monthlyTotal: monthTotal[0]?.total || 0,

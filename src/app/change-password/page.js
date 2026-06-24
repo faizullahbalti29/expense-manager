@@ -155,13 +155,13 @@ export default function ChangePasswordPage() {
               />
 
               {error && (
-                <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
+                <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }} onClose={() => setError("")}>
                   {error}
                 </Alert>
               )}
 
               {success && (
-                <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>
+                <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }} onClose={() => setSuccess("")}>
                   {success}
                 </Alert>
               )}

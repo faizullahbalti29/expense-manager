@@ -20,9 +20,7 @@ export const fetchLoans = createAsyncThunk(
     try {
       const typeQuery = type === "all" ? "" : `type=${type}&`;
       const statusQuery = status === "all" ? "" : `status=${status}&`;
-      console.log(
-        `${API_BASE}?${typeQuery}${statusQuery}page=${page}&limit=${limit}`,
-      );
+
       const response = await fetch(
         `${API_BASE}?${typeQuery}${statusQuery}page=${page}&limit=${limit}`,
       );
@@ -109,9 +107,7 @@ export const fetchLoanStats = createAsyncThunk(
       //   loanTaken: takenTotal,
       // };
       const stats = await fetch(`${API_BASE}/stats`);
-      // console.log("Stats response:", stats);
       const data = await parseResponse(stats);
-      return data;
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
