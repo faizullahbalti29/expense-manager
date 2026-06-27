@@ -53,7 +53,6 @@ const BAR_COLORS = [
   "#818cf8",
 ];
 
-// Custom tooltip
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -115,8 +114,6 @@ export default function ExpenseStats() {
     };
 
     loadStats();
-    const interval = setInterval(loadStats, 60000);
-    return () => clearInterval(interval);
   }, [dispatch, handleUnauthorized]);
 
   if (statsLoading) {
@@ -176,8 +173,6 @@ export default function ExpenseStats() {
       </Box>
     </Typography>
   );
-
-  /* ─── shared card sx ─── */
   const cardSx = {
     background: "#18181b",
     backdropFilter: "blur(10px)",
@@ -214,7 +209,6 @@ export default function ExpenseStats() {
           gap: 2,
         }}
       >
-        {/* This Year */}
         <Card sx={statCardSx}>
           <CardContent sx={statContentSx}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
@@ -228,8 +222,6 @@ export default function ExpenseStats() {
             {renderCurrency(stats?.yearlyTotal?.toFixed(2) ?? "0.00", "2rem")}
           </CardContent>
         </Card>
-
-        {/* This Month */}
         <Card sx={statCardSx}>
           <CardContent sx={statContentSx}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
@@ -245,8 +237,6 @@ export default function ExpenseStats() {
             {renderCurrency(stats?.monthlyTotal?.toFixed(2) ?? "0.00", "2rem")}
           </CardContent>
         </Card>
-
-        {/* Previous Month */}
         <Card sx={statCardSx}>
           <CardContent sx={statContentSx}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
@@ -266,7 +256,6 @@ export default function ExpenseStats() {
           </CardContent>
         </Card>
 
-        {/* Month-to-Date Comparison */}
         <Card sx={statCardSx}>
           <CardContent sx={statContentSx}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
