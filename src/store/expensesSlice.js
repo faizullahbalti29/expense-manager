@@ -95,6 +95,7 @@ export const fetchExpenseStats = createAsyncThunk(
         yearlyTotal: currentData.yearlyTotal || 0,
         prevMonthTotal: currentData.prevMonthTotal || 0,
         previousMonthTotal: previousData.monthlyTotal || 0,
+        monthWiseTotal: currentData.monthWiseTotal || [],
       };
     } catch (error) {
       return rejectWithValue(error.message);

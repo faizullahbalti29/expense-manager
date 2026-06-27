@@ -18,6 +18,7 @@ import {
 export default function StatsTableSkeleton({
   showStats = true,
   statsCount = 3,
+  showChart = false,
   showTable = true,
   tableColumns = 6,
   rows = 5,
@@ -53,6 +54,23 @@ export default function StatsTableSkeleton({
             </Card>
           ))}
         </Box>
+      )}
+
+      {showChart && (
+        <Card
+          sx={{
+            background: "rgba(30,30,35,0.6)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            width: "100%",
+            mb: 2,
+          }}
+        >
+          <CardContent>
+            <Skeleton variant="text" width="40%" sx={{ mb: 2 }} />
+            <Skeleton variant="rectangular" width="100%" height={260} />
+          </CardContent>
+        </Card>
       )}
 
       {showTable && (

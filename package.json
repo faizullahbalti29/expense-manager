@@ -23,7 +23,8 @@
     "notistack": "^3.0.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-redux": "^9.3.0"
+    "react-redux": "^9.3.0",
+    "recharts": "^3.9.0"
   },
   "devDependencies": {
     "babel-plugin-react-compiler": "1.0.0",

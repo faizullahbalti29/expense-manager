@@ -87,8 +87,6 @@ export async function GET(req) {
         },
       },
     ]);
-
-
     // Yearly expense sum (all expenses for the user)
     const yearlyTotal = await Expense.aggregate([
       {
@@ -103,11 +101,36 @@ export async function GET(req) {
         },
       },
     ]);
-
+    const monthlyTotal = await Expense.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            $lt: new Date(`${Number(year) + 1}-01-01T00:00:00.000Z`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $month: "$date"
+          },
+          total: {
+            $sum: "$amount"
+          }
+        }
+      },
+      {
+        $sort: {
+          _id: 1
+        }
+      }
+    ]);
     return NextResponse.json({
       monthlyTotal: monthTotal[0]?.total || 0,
       yearlyTotal: yearlyTotal[0]?.total || 0,
       prevMonthTotal: prevMonthTotal[0]?.total || 0,
+      monthWiseTotal: monthlyTotal
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
