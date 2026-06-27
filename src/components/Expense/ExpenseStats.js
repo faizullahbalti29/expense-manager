@@ -345,7 +345,7 @@ export default function ExpenseStats() {
                 overflowY: "hidden",
               }}
             >
-              <Box sx={{ minWidth: { xs: 420, sm: 560 }, height: "100%" }}>
+              <Box sx={{ minWidth: 550, height: "100%" }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={chartData}
@@ -364,7 +364,7 @@ export default function ExpenseStats() {
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fill: "#cbd5e1", fontSize: 11 }}
+                      tick={{ fill: "#cbd5e1", fontSize: 10 }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(value) =>
