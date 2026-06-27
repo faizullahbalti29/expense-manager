@@ -336,59 +336,71 @@ export default function ExpenseStats() {
               </Typography>
             </Box>
           ) : (
-            <Box sx={{ flex: 1, minHeight: 320, height: 320 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={chartData}
-                  margin={{ top: 6, right: 12, left: 0, bottom: 0 }}
-                  barCategoryGap="28%"
-                >
-                  <CartesianGrid
-                    stroke="rgba(148,163,184,0.08)"
-                    vertical={false}
-                    strokeDasharray="2 2"
-                  />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fill: "#cbd5e1", fontSize: 11 }}
-                    axisLine={{ stroke: "#334155" }}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fill: "#cbd5e1", fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(value) =>
-                      value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
-                    }
-                    width={40}
-                  />
-                  <Tooltip
-                    content={<CustomTooltip />}
-                    cursor={{ fill: "rgba(139,92,246,0.08)" }}
-                  />
-                  <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={42}>
-                    <LabelList
-                      dataKey="total"
-                      position="top"
-                      formatter={(value) =>
-                        value >= 1000 ? `${(value / 1000).toFixed(2)}k` : value
-                      }
-                      style={{
-                        fill: "#e2e8f0",
-                        fontSize: 11,
-                        fontWeight: 700,
-                      }}
+            <Box
+              sx={{
+                flex: 1,
+                minHeight: 320,
+                height: 320,
+                overflowX: "auto",
+                overflowY: "hidden",
+              }}
+            >
+              <Box sx={{ minWidth: { xs: 420, sm: 560 }, height: "100%" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 6, right: 12, left: 0, bottom: 0 }}
+                    barCategoryGap="28%"
+                  >
+                    <CartesianGrid
+                      stroke="rgba(148,163,184,0.08)"
+                      vertical={false}
+                      strokeDasharray="2 2"
                     />
-                    {chartData.map((entry) => (
-                      <Cell
-                        key={`cell-${entry.monthIndex}`}
-                        fill={getBarColor(entry.monthIndex)}
+                    <XAxis
+                      dataKey="month"
+                      tick={{ fill: "#cbd5e1", fontSize: 11 }}
+                      axisLine={{ stroke: "#334155" }}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      tick={{ fill: "#cbd5e1", fontSize: 11 }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickFormatter={(value) =>
+                        value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+                      }
+                      width={40}
+                    />
+                    <Tooltip
+                      content={<CustomTooltip />}
+                      cursor={{ fill: "rgba(139,92,246,0.08)" }}
+                    />
+                    <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={42}>
+                      <LabelList
+                        dataKey="total"
+                        position="top"
+                        formatter={(value) =>
+                          value >= 1000
+                            ? `${(value / 1000).toFixed(2)}k`
+                            : value
+                        }
+                        style={{
+                          fill: "#e2e8f0",
+                          fontSize: 11,
+                          fontWeight: 700,
+                        }}
                       />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+                      {chartData.map((entry) => (
+                        <Cell
+                          key={`cell-${entry.monthIndex}`}
+                          fill={getBarColor(entry.monthIndex)}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
             </Box>
           )}
         </CardContent>
