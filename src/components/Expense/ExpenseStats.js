@@ -350,7 +350,7 @@ export default function ExpenseStats() {
                   <BarChart
                     data={chartData}
                     margin={{ top: 6, right: 12, left: 0, bottom: 0 }}
-                    barCategoryGap="28%"
+                    barCategoryGap="6%"
                   >
                     <CartesianGrid
                       stroke="rgba(148,163,184,0.08)"
@@ -376,7 +376,7 @@ export default function ExpenseStats() {
                       content={<CustomTooltip />}
                       cursor={{ fill: "rgba(139,92,246,0.08)" }}
                     />
-                    <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={42}>
+                    <Bar dataKey="total" radius={[4, 4, 0, 0]} maxBarSize={60}>
                       <LabelList
                         dataKey="total"
                         position="top"
