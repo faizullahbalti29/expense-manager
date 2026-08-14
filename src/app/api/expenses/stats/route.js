@@ -104,6 +104,7 @@ export async function GET(req) {
     const monthlyTotal = await Expense.aggregate([
       {
         $match: {
+          user: userId,
           date: {
             $gte: new Date(`${year}-01-01T00:00:00.000Z`),
             $lt: new Date(`${Number(year) + 1}-01-01T00:00:00.000Z`)
