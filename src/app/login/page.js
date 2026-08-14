@@ -142,16 +142,16 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
-              <Box 
+              <Box
                 onClick={() => {
                   setEmail("test@gmail.com");
-                  setPassword("TestingUser@123");
+                  setPassword("TestUser@123");
                 }}
-                sx={{ 
-                  mt: 2, 
-                  p: 1.5, 
-                  bgcolor: "rgba(255, 255, 255, 0.03)", 
-                  borderRadius: 2, 
+                sx={{
+                  mt: 2,
+                  p: 1.5,
+                  bgcolor: "rgba(255, 255, 255, 0.03)",
+                  borderRadius: 2,
                   border: "1px dashed rgba(255, 255, 255, 0.15)",
                   cursor: "pointer",
                   transition: "background-color 0.2s, border-color 0.2s",
@@ -168,7 +168,7 @@ export default function LoginPage() {
                   Email: test@gmail.com
                 </Typography>
                 <Typography variant="body2" sx={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
-                  Password: TestingUser@123
+                  Password: TestUser@123
                 </Typography>
               </Box>
 
