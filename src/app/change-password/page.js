@@ -55,7 +55,7 @@ export default function ChangePasswordPage() {
 
       setSuccess("Password changed successfully! Redirecting...");
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/");
       }, 2000);
     } catch (err) {
       setError("Failed to connect to server");

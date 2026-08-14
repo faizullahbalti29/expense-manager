@@ -142,6 +142,36 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
+              <Box 
+                onClick={() => {
+                  setEmail("test@gmail.com");
+                  setPassword("TestingUser@123");
+                }}
+                sx={{ 
+                  mt: 2, 
+                  p: 1.5, 
+                  bgcolor: "rgba(255, 255, 255, 0.03)", 
+                  borderRadius: 2, 
+                  border: "1px dashed rgba(255, 255, 255, 0.15)",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s, border-color 0.2s",
+                  "&:hover": {
+                    bgcolor: "rgba(255, 255, 255, 0.08)",
+                    borderColor: "primary.main",
+                  }
+                }}
+              >
+                <Typography variant="caption" display="block" color="text.secondary" sx={{ mb: 0.5, fontWeight: "medium" }}>
+                  💡 Demo / Guest Credentials (Click to auto-fill):
+                </Typography>
+                <Typography variant="body2" sx={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
+                  Email: test@gmail.com
+                </Typography>
+                <Typography variant="body2" sx={{ fontFamily: "monospace", fontSize: "0.85rem" }}>
+                  Password: TestingUser@123
+                </Typography>
+              </Box>
+
               {error && (
                 <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
                   {error}
