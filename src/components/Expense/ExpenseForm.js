@@ -76,7 +76,7 @@ export default function ExpenseForm() {
         handleUnauthorized();
         return;
       }
-      console.log(error)
+      console.log(error);
       enqueueSnackbar(error || "Failed to add expense", { variant: "error" });
       // window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
@@ -109,6 +109,9 @@ export default function ExpenseForm() {
       setIsCustomName(true);
     } else {
       setIsCustomName(false);
+    }
+    if (selectedName === "Metro Charge") {
+      setAmount("30");
     }
     setName(selectedName);
   };
@@ -231,7 +234,7 @@ export default function ExpenseForm() {
                 )
               }
               disabled={!name || !amount || loading}
-            // sx={{ px: 4, flex: 1 }}
+              // sx={{ px: 4, flex: 1 }}
             >
               {loading ? "Saving..." : "Add Expense"}
             </Button>
