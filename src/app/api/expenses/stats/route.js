@@ -30,6 +30,7 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const month = searchParams.get("month");
+    const type = searchParams.get("type");
 
     if (!month) {
       return NextResponse.json(
@@ -37,11 +38,10 @@ export async function GET(req) {
         { status: 400 },
       );
     }
-
+    const userId = new mongoose.Types.ObjectId(user.userId);
     const monthNum = parseInt(month);
     const now = new Date();
     const year = now.getFullYear();
-    const userId = new mongoose.Types.ObjectId(user.userId);
 
     const monthStartDate = new Date(year, monthNum, 1);
     const monthEndDate = new Date(year, monthNum + 1, 0, 23, 59, 59, 999);
@@ -59,12 +59,18 @@ export async function GET(req) {
       now.getDate()
     );
 
+    const monthMatch = {
+      user: userId,
+      date: { $gte: monthStartDate, $lte: monthEndDate },
+    };
+
+    if (type && type !== "all") {
+      monthMatch.name = type;
+    }
+
     const monthTotal = await Expense.aggregate([
       {
-        $match: {
-          user: userId,
-          date: { $gte: monthStartDate, $lte: monthEndDate },
-        },
+        $match: monthMatch,
       },
       {
         $group: {
@@ -107,31 +113,31 @@ export async function GET(req) {
           user: userId,
           date: {
             $gte: new Date(`${year}-01-01T00:00:00.000Z`),
-            $lt: new Date(`${Number(year) + 1}-01-01T00:00:00.000Z`)
-          }
-        }
+            $lt: new Date(`${Number(year) + 1}-01-01T00:00:00.000Z`),
+          },
+        },
       },
       {
         $group: {
           _id: {
-            $month: "$date"
+            $month: "$date",
           },
           total: {
-            $sum: "$amount"
-          }
-        }
+            $sum: "$amount",
+          },
+        },
       },
       {
         $sort: {
-          _id: 1
-        }
-      }
+          _id: 1,
+        },
+      },
     ]);
     return NextResponse.json({
       monthlyTotal: monthTotal[0]?.total || 0,
       yearlyTotal: yearlyTotal[0]?.total || 0,
       prevMonthTotal: prevMonthTotal[0]?.total || 0,
-      monthWiseTotal: monthlyTotal
+      monthWiseTotal: monthlyTotal,
     });
   } catch (error) {
     console.error("Error fetching stats:", error);

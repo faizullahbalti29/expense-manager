@@ -35,7 +35,9 @@ import {
   setExpensePage,
   setExpenseLimit,
   totalMonthlyFilteredExpenses,
+  setExpenseFilterType
 } from "../../store/expensesSlice";
+import { EXPENSE_CATEGORIES } from "./ExpenseForm";
 
 const MONTHS = [
   { label: "All Months", value: "all" },
@@ -84,14 +86,26 @@ export default function ExpenseTable() {
     dispatch(
       fetchExpenses({
         month: filters.month,
+        type: filters.type,
         page: pagination.currentPage,
         limit: pagination.limit,
       }),
     );
     if (filters.month !== "all") {
-      dispatch(totalMonthlyFilteredExpenses(filters.month));
+      dispatch(
+        totalMonthlyFilteredExpenses({
+          month: filters.month,
+          type: filters.type,
+        }),
+      );
     }
-  }, [dispatch, filters.month, pagination.currentPage, pagination.limit]);
+  }, [
+    dispatch,
+    filters.month,
+    filters.type,
+    pagination.currentPage,
+    pagination.limit,
+  ]);
   const handleEditClick = (expense) => {
     setSelectedExpense(expense);
     setEditModalOpen(true);
@@ -113,12 +127,20 @@ export default function ExpenseTable() {
       dispatch(
         fetchExpenses({
           month: filters.month,
+          type: filters.type,
           page: pagination.currentPage,
           limit: pagination.limit,
         }),
       );
       dispatch(fetchExpenseStats());
-      dispatch(totalMonthlyFilteredExpenses(filters.month))
+      if (filters.month !== "all") {
+        dispatch(
+          totalMonthlyFilteredExpenses({
+            month: filters.month,
+            type: filters.type,
+          }),
+        );
+      }
       setConfirmOpen(false);
       setExpenseToDelete(null);
     } catch (error) {
@@ -126,7 +148,9 @@ export default function ExpenseTable() {
         handleUnauthorized();
         return;
       }
-      enqueueSnackbar(error?.message || "Failed to delete expense", { variant: "error" });
+      enqueueSnackbar(error?.message || "Failed to delete expense", {
+        variant: "error",
+      });
     } finally {
       setDeletingExpense(false);
     }
@@ -180,41 +204,87 @@ export default function ExpenseTable() {
             >
               Your Expenses
             </Typography>
-            <TextField
-              select
-              value={filters.month}
-              onChange={(e) => {
-                dispatch(setExpenseMonthFilter(e.target.value));
-                dispatch(setExpensePage(1));
-              }}
-              size="small"
-              SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    sx: {
-                      "& .MuiMenuItem-root": {
-                        fontSize: "14px",
-                      },
-                      maxHeight: 250,
-                    },
-                  },
-                  disableScrollLock: true,
-                },
-              }}
+            <Box
               sx={{
-                width: {
-                  xs: "100%",
-                  md: "300px",
-                },
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                flexWrap: { xs: "wrap", sm: "nowrap" },
+                width: { xs: "100%", md: "auto" },
               }}
-              label="Filter by Month"
             >
-              {MONTHS.map((month) => (
-                <MenuItem key={month.value} value={month.value}>
-                  {month.label}
-                </MenuItem>
-              ))}
-            </TextField>
+              <TextField
+                select
+                value={filters.type || "all"}
+                onChange={(e) => {
+                  dispatch(setExpenseFilterType(e.target.value));
+                  dispatch(setExpensePage(1));
+                }}
+                size="small"
+                SelectProps={{
+                  MenuProps: {
+                    PaperProps: {
+                      sx: {
+                        "& .MuiMenuItem-root": {
+                          fontSize: "14px",
+                        },
+                        maxHeight: 250,
+                      },
+                    },
+                    disableScrollLock: true,
+                  },
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "220px",
+                  },
+                }}
+                label="Filter by Type"
+              >
+                <MenuItem value="all">All</MenuItem>
+                {EXPENSE_CATEGORIES.map((exp) => (
+                  <MenuItem key={exp.value} value={exp.value}>
+                    {exp.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                value={filters.month}
+                onChange={(e) => {
+                  dispatch(setExpenseMonthFilter(e.target.value));
+                  dispatch(setExpensePage(1));
+                }}
+                size="small"
+                SelectProps={{
+                  MenuProps: {
+                    PaperProps: {
+                      sx: {
+                        "& .MuiMenuItem-root": {
+                          fontSize: "14px",
+                        },
+                        maxHeight: 250,
+                      },
+                    },
+                    disableScrollLock: true,
+                  },
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "220px",
+                  },
+                }}
+                label="Filter by Month"
+              >
+                {MONTHS.map((month) => (
+                  <MenuItem key={month.value} value={month.value}>
+                    {month.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
           </Box>
 
           <TableContainer
@@ -345,16 +415,20 @@ export default function ExpenseTable() {
                           sx={{
                             fontWeight: "bold",
                             color: "primary.main",
-                            fontsize: "16px",
+                            fontSize: "16px",
                           }}
                         >
-                          Expense in {getMonthLabel(filters.month)} - Total:
+                          Expense in {getMonthLabel(filters.month)}
+                          {filters.type && filters.type !== "all"
+                            ? ` (${filters.type})`
+                            : ""}{" "}
+                          - Total:
                         </Typography>
                         <Typography
                           sx={{
                             fontWeight: "bold",
                             color: "primary.main",
-                            fontsize: "16px",
+                            fontSize: "16px",
                             marginLeft: "auto",
                           }}
                         >

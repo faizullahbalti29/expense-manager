@@ -24,7 +24,7 @@ import {
   fetchExpenseStats,
   totalMonthlyFilteredExpenses,
 } from "../../store/expensesSlice";
-const EXPENSE_CATEGORIES = [
+export const EXPENSE_CATEGORIES = [
   { label: "Hostel Fees", value: "Hostel Fees" },
   { label: "Metro Charge", value: "Metro Charge" },
   { label: "Food", value: "Food" },
@@ -63,12 +63,20 @@ export default function ExpenseForm() {
       dispatch(
         fetchExpenses({
           month: filters.month,
+          type: filters.type,
           page: pagination.currentPage,
           limit: pagination.limit,
         }),
       );
       dispatch(fetchExpenseStats());
-      dispatch(totalMonthlyFilteredExpenses(filters.month));
+      if (filters.month !== "all") {
+        dispatch(
+          totalMonthlyFilteredExpenses({
+            month: filters.month,
+            type: filters.type,
+          }),
+        );
+      }
       // window.scrollTo({ top: 0, behavior: "smooth" });
       return result;
     } catch (error) {

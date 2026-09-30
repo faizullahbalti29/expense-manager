@@ -31,6 +31,7 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const month = searchParams.get("month");
+    const type = searchParams.get("type");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
@@ -44,6 +45,10 @@ export async function GET(req) {
       const endDate = new Date(year, monthNum + 1, 0, 23, 59, 59, 999);
 
       query.date = { $gte: startDate, $lte: endDate };
+    }
+
+    if (type && type !== "all") {
+      query.name = type;
     }
 
     const skip = (page - 1) * limit;

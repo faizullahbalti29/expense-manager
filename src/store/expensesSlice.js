@@ -13,11 +13,12 @@ const parseResponse = async (response) => {
 
 export const fetchExpenses = createAsyncThunk(
   "expenses/fetchExpenses",
-  async ({ month = "all", page = 1, limit = 10 } = {}, { rejectWithValue }) => {
+  async ({ month = "all", type = "all", page = 1, limit = 10 } = {}, { rejectWithValue }) => {
     try {
       const monthQuery = month === "all" ? "" : `month=${month}&`;
+      const typeQuery = type === "all" || !type ? "" : `type=${encodeURIComponent(type)}&`;
       const response = await fetch(
-        `${API_BASE}?${monthQuery}page=${page}&limit=${limit}`,
+        `${API_BASE}?${monthQuery}${typeQuery}page=${page}&limit=${limit}`,
       );
       const data = await parseResponse(response);
       return data;
@@ -106,18 +107,35 @@ export const totalMonthlyFilteredExpenses = createAsyncThunk(
   "expenses/totalMonthlyFilteredExpenses",
   async (payload, { rejectWithValue }) => {
     try {
-      const currentMonth = payload;
-      const currentRes = await Promise.all([
-        fetch(`/api/expenses/stats?month=${currentMonth}`),
-      ]);
-      const parsedRes = await Promise.all(
-        currentRes.map((res) => parseResponse(res)),
-      );
-      const currentData = parsedRes[0];
+      let month = "all";
+      let type = "all";
+
+      if (typeof payload === "object" && payload !== null) {
+        if (payload.filterType === "month") {
+          month = payload.value;
+        } else if (payload.filterType === "type") {
+          type = payload.value;
+        } else {
+          month = payload.month ?? payload.value ?? "all";
+          type = payload.type ?? "all";
+        }
+      } else if (typeof payload === "string" || typeof payload === "number") {
+        month = payload;
+      }
+
+      if (month === "all") {
+        return {
+          monthlyTotal: 0,
+          yearlyTotal: 0,
+        };
+      }
+
+      const typeQuery = type && type !== "all" ? `&type=${encodeURIComponent(type)}` : "";
+      const response = await fetch(`/api/expenses/stats?month=${month}${typeQuery}`);
+      const currentData = await parseResponse(response);
       return {
         monthlyTotal: currentData.monthlyTotal || 0,
         yearlyTotal: currentData.yearlyTotal || 0,
-        // previousMonthTotal: previousData.monthlyTotal || 0,
       };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -135,6 +153,7 @@ const initialState = {
   },
   filters: {
     month: new Date().getMonth().toString(),
+    type: "all",
   },
   loading: false,
   error: null,
@@ -161,6 +180,9 @@ const expensesSlice = createSlice({
   reducers: {
     setExpenseMonthFilter(state, action) {
       state.filters.month = action.payload;
+    },
+    setExpenseFilterType(state, action) {
+      state.filters.type = action.payload;
     },
     setExpensePage(state, action) {
       state.pagination.currentPage = action.payload;
@@ -236,8 +258,8 @@ const expensesSlice = createSlice({
       })
       .addCase(totalMonthlyFilteredExpenses.fulfilled, (state, action) => {
         state.filteredMonthlyTotal.loading = false;
-        state.filteredMonthlyTotal.monthlyTotal = action.payload.monthlyTotal;
-        state.filteredMonthlyTotal.yearlyTotal = action.payload.yearlyTotal;
+        state.filteredMonthlyTotal.monthlyTotal = action.payload.monthlyTotal || 0;
+        state.filteredMonthlyTotal.yearlyTotal = action.payload.yearlyTotal || 0;
       })
       .addCase(totalMonthlyFilteredExpenses.rejected, (state, action) => {
         state.filteredMonthlyTotal.loading = false;
@@ -247,6 +269,6 @@ const expensesSlice = createSlice({
   },
 });
 
-export const { setExpenseMonthFilter, setExpensePage, setExpenseLimit } =
+export const { setExpenseMonthFilter, setExpensePage, setExpenseLimit, setExpenseFilterType } =
   expensesSlice.actions;
 export default expensesSlice.reducer;

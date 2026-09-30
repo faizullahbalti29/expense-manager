@@ -73,12 +73,20 @@ export default function EditExpenseModal({
       dispatch(
         fetchExpenses({
           month: filters.month,
+          type: filters.type,
           page: pagination.currentPage,
           limit: pagination.limit,
         }),
       );
       dispatch(fetchExpenseStats());
-      dispatch(totalMonthlyFilteredExpenses(filters.month))
+      if (filters.month !== "all") {
+        dispatch(
+          totalMonthlyFilteredExpenses({
+            month: filters.month,
+            type: filters.type,
+          }),
+        );
+      }
       // window.scrollTo({ top: 0, behavior: "smooth" });
       handleClose();
     } catch (error) {
