@@ -24,15 +24,8 @@ import {
   fetchExpenseStats,
   totalMonthlyFilteredExpenses,
 } from "../../store/expensesSlice";
-export const EXPENSE_CATEGORIES = [
-  { label: "Hostel Fees", value: "Hostel Fees" },
-  { label: "Metro Charge", value: "Metro Charge" },
-  { label: "Food", value: "Food" },
-  { label: "Travel", value: "Travel" },
-  { label: "Entertainment", value: "Entertainment" },
-  { label: "Shopping", value: "Shopping" },
-  { label: "Other", value: "Other" },
-];
+import { EXPENSE_CATEGORIES } from "../../lib/constants";
+export { EXPENSE_CATEGORIES };
 
 export default function ExpenseForm() {
   const router = useRouter();

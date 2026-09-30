@@ -3,6 +3,7 @@ import Expense from "../../../../models/Expense";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
+import { PREDEFINED_EXPENSE_TYPES } from "../../../../lib/constants";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -65,7 +66,11 @@ export async function GET(req) {
     };
 
     if (type && type !== "all") {
-      monthMatch.name = type;
+      if (type === "Other") {
+        monthMatch.name = { $nin: PREDEFINED_EXPENSE_TYPES };
+      } else {
+        monthMatch.name = type;
+      }
     }
 
     const monthTotal = await Expense.aggregate([

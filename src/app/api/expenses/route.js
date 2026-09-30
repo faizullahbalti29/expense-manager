@@ -4,6 +4,7 @@ import User from "../../../models/User"; // Ensure User model is compiled
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { PREDEFINED_EXPENSE_TYPES } from "../../../lib/constants";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -48,7 +49,11 @@ export async function GET(req) {
     }
 
     if (type && type !== "all") {
-      query.name = type;
+      if (type === "Other") {
+        query.name = { $nin: PREDEFINED_EXPENSE_TYPES };
+      } else {
+        query.name = type;
+      }
     }
 
     const skip = (page - 1) * limit;
