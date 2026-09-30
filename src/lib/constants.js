@@ -5,6 +5,8 @@ export const EXPENSE_CATEGORIES = [
   { label: "Travel", value: "Travel" },
   { label: "Entertainment", value: "Entertainment" },
   { label: "Shopping", value: "Shopping" },
+  { label: "Fees", value: "Fees" },
+  { label: "Packages", value: "Packages" },
   { label: "Other", value: "Other" },
 ];
 

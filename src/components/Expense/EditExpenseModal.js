@@ -9,6 +9,7 @@ import {
   Typography,
   TextField,
   Button,
+  MenuItem,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import {
@@ -17,13 +18,16 @@ import {
   fetchExpenseStats,
   totalMonthlyFilteredExpenses,
 } from "../../store/expensesSlice";
+import { EXPENSE_CATEGORIES, PREDEFINED_EXPENSE_TYPES } from "../../lib/constants";
 
 const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: { xs: "90%", sm: 420 },
+  maxHeight: "90vh",
+  overflowY: "auto",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -39,7 +43,9 @@ export default function EditExpenseModal({
   const router = useRouter();
   const dispatch = useDispatch();
   const { pagination, filters } = useSelector((state) => state.expenses);
-  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [customName, setCustomName] = useState("");
+  const [isCustomName, setIsCustomName] = useState(false);
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
@@ -48,7 +54,16 @@ export default function EditExpenseModal({
 
   useEffect(() => {
     if (expense) {
-      setName(expense.name);
+      const isPredefined = PREDEFINED_EXPENSE_TYPES.includes(expense.name);
+      if (isPredefined) {
+        setCategory(expense.name);
+        setIsCustomName(false);
+        setCustomName("");
+      } else {
+        setCategory("Other");
+        setIsCustomName(true);
+        setCustomName(expense.name || "");
+      }
       setAmount(expense.amount);
       setDescription(expense.description || "");
       // Format date for input type="date"
@@ -57,6 +72,17 @@ export default function EditExpenseModal({
       setDate(isoDate);
     }
   }, [expense]);
+
+  const handleCategoryChange = (e) => {
+    const selected = e.target.value;
+    setCategory(selected);
+    if (selected === "Other") {
+      setIsCustomName(true);
+    } else {
+      setIsCustomName(false);
+    }
+  };
+
   const handleUnauthorized = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("isAuthenticated");
@@ -102,10 +128,15 @@ export default function EditExpenseModal({
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const finalName = isCustomName ? customName.trim() : category;
+    if (!finalName) {
+      enqueueSnackbar("Please provide an expense name", { variant: "warning" });
+      return;
+    }
     await updateExpenseHandler({
       id: expense._id,
       ...expense,
-      name,
+      name: finalName,
       amount: parseFloat(amount),
       date: new Date(date).toISOString(),
       description,
@@ -136,12 +167,40 @@ export default function EditExpenseModal({
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           <TextField
-            label="Expense Name"
+            select
+            label="Expense Category"
             variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={category}
+            onChange={handleCategoryChange}
             required
-          />
+            SelectProps={{
+              disableScrollLock: true,
+              MenuProps: {
+                PaperProps: {
+                  sx: {
+                    maxHeight: 250,
+                  },
+                },
+              },
+            }}
+          >
+            {EXPENSE_CATEGORIES.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {isCustomName && (
+            <TextField
+              label="Expense Name"
+              placeholder="e.g. Lunch"
+              variant="outlined"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+              required
+            />
+          )}
           <TextField
             label="Description"
             variant="outlined"
